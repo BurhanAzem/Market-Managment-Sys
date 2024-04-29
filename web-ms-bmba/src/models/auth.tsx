@@ -1,8 +1,7 @@
 import { IUser } from "./user";
 
 export interface IAuth {
-    authToken : string ,
-    isPasswordChanged: boolean,
-    user? : IUser;
+    token : string ,
+    userDto? : IUser;
     error? : string | null;
 }

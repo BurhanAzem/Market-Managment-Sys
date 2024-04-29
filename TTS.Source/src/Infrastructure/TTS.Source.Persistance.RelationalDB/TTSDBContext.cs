@@ -33,6 +33,8 @@ namespace TTS.Source.Persistance.RelationalDB
         public DbSet<RequiredProducts> RequiredProducts { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<SupplierOrders> SupplierOrders { get; set; }
+        public DbSet<Shelf> Shelfs { get; set; }
+
 
 
 

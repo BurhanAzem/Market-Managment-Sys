@@ -12,7 +12,7 @@ if (token) {
 
 
 const instance = axios.create({
-    baseURL : "http://127.0.0.1/api/",
+    baseURL : "http://localhost:5280/api/",
     headers : config
 }) 
 

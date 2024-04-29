@@ -5,6 +5,8 @@ namespace TTS.Source.Domain.Entities
 {
     public class Category : BaseAggregateRoot<Guid>
     {
+         public Category()
+         {}
         public Category(string name, string description) 
         {
             Name = name;

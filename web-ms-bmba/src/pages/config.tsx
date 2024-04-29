@@ -1,4 +1,4 @@
-import { ReactElement, FC } from "react";
+import { ReactElement, FC, useState } from "react";
 import { 
     Box, 
     FormGroup, 
@@ -12,6 +12,7 @@ import {
   useTemplateThemeModeContext 
 } from "../hooks";
 import { TemplateThemeModeContextType } from "../context";
+import { useTranslation } from "react-i18next";
 
 
 const AntSwitch = styled(Switch)(({ theme }) => ({
@@ -59,12 +60,17 @@ const AntSwitch = styled(Switch)(({ theme }) => ({
 const Config: FC = (): ReactElement => {
   const { rtl, setRtl } = useTemplateDirectionContext();
   const { isDark, toggleThemeMode } = useTemplateThemeModeContext() as TemplateThemeModeContextType;
+  const [t, i18n] = useTranslation();
+
   
   const rtlDirectionSwitchChangeHandler = () => {
     setRtl(!rtl);
   }
   const themeModeSwitchChangeHandler = () => {
     toggleThemeMode();
+  }
+  const languageChangeHandler = () => {
+    i18n.changeLanguage(i18n.language === 'en' ? 'ar' : 'en');
   }
 
   return (
@@ -87,6 +93,11 @@ const Config: FC = (): ReactElement => {
             <Typography>light mode</Typography>
             <AntSwitch value={isDark} onChange={themeModeSwitchChangeHandler} defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
             <Typography>dark mode</Typography>
+          </Stack>
+          <Stack direction="row" spacing={1} mt={2} alignItems="center">
+            <Typography>arabic</Typography>
+            <AntSwitch value={i18n.language != 'en'} onChange={languageChangeHandler} defaultChecked inputProps={{ 'aria-label': 'ant design' }} />
+            <Typography>english</Typography>
           </Stack>
         </FormGroup>
       </Box>

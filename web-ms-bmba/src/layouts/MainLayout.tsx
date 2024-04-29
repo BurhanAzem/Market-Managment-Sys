@@ -15,25 +15,32 @@ const Layout: FC<LayoutProps> = ({ children }): ReactElement => {
   const { rtl } = useTemplateDirectionContext()
   const flexDirection: string = rtl ? "row-reverse" : "row"
   return (
-    <Box
-      sx={{
+    <Box sx={{
+      display: "flex", flexDirection: 'column', maxHeight: "100vh",
+      maxWidth: "100vw",
+      flexGrow: 1
+    }} >
+      <Header />
+
+      <Box
+        sx={{
           display: "flex",
-          flexDirection: {flexDirection},
-          maxHeight: "100vh",
-          maxWidth: "100vw",
-          flexGrow: 1,
-      }}
-    >
-      <CssBaseline />
+          flexDirection: { flexDirection },
+
+        }}
+      >
+        <CssBaseline />
+
         <SideBar />
         <Main >
-          <Header />
           <Content>
             {children}
           </Content>
-          <Footer />
         </Main>
+      </Box>
+      <Footer />
     </Box>
+
   );
 };
 

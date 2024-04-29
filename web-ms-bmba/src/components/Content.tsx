@@ -28,10 +28,10 @@ export const Content: FC<ContentProps> = ({ children }): ReactElement => {
           my:'0',
           mx:'auto', 
           height:'100%', 
-          width:{xs:'100%', sm:'90%', md:'80%', lg:'80%', xl:'80%'}, 
+          width:{xs:'100%', sm:'90%', md:'90%', lg:'90%', xl:'90%'}, 
           boxShadow:15,
           // "10px 10px 10px #b6d4f9",
-          backgroundColor:'#e8f1fc',
+          // backgroundColor:'#e8f1fc',
         }}
       >
         {children}

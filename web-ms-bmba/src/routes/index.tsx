@@ -3,15 +3,11 @@ import async from "../components/Async";
 import { IRoute } from "../types/RouteType";
 
 
-const Dashboard = async(() => import("../pages/dashboard/Dashboard"));
+const Dashboard = async(() => import("../pages/home/Home"));
 const About = async(() => import("../pages/About"));
 const Config = async(() => import("../pages/config"));
-const Company = async(() => import("../pages/baseInfo/company"));
-const Department = async(() => import("../pages/baseInfo/department"));
-const Employee = async(() => import("../pages/baseInfo/employee"));
-const JobPosition = async(() => import("../pages/baseInfo/jobPosition"));
+const Products = async(() => import("../pages/Products/Products"));
 
-const Project = async(() => import("../pages/baseInfo/project"));
 const Meal = async(() => import("../pages/restaurant/admin/meal"));
 const MealsSetting_Monthly = async(() => import("../pages/restaurant/admin/mealsSetting_Monthly"));
 const MealsSelection_CurrentMonth = async(() => import("../pages/restaurant/users/mealsSelection_CurrentMonth"));
@@ -54,40 +50,13 @@ export const routes: Array<IRoute> = [
     },
     //------------------Base Info---------------------
     {
-        key: 'company-route',
-        title: 'Company',
-        path: 'baseinfo/company',
+        key: 'Products-route',
+        title: 'Products',
+        path: 'Products',
         enabled: true,
-        component: Company
+        component: Products
     },
-    {
-        key: 'department-route',
-        title: 'Department',
-        path: 'baseinfo/department',
-        enabled: true,
-        component: Department
-    },
-    {
-        key: 'project-route',
-        title: 'Project',
-        path: 'baseinfo/project',
-        enabled: true,
-        component: Project
-    },
-    {
-        key: 'employee-route',
-        title: 'Employee',
-        path: 'baseinfo/employee',
-        enabled: true,
-        component: Employee
-    },
-    {
-        key: 'jobPosition-route',
-        title: 'JobPosition',
-        path: 'baseinfo/jobPosition',
-        enabled: true,
-        component: JobPosition
-    },
+
     //------------------Restaurant---------------------
     {
         key: 'meal-route',

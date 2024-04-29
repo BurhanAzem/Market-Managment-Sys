@@ -134,10 +134,10 @@ namespace TTS.Source.Persistance.RelationalDB.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<int>("BarCode")
-                        .HasColumnType("integer");
+                    b.Property<double>("BarCode")
+                        .HasColumnType("double precision");
 
-                    b.Property<Guid>("CategoryId")
+                    b.Property<Guid?>("CategoryId")
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedDate")
@@ -159,7 +159,7 @@ namespace TTS.Source.Persistance.RelationalDB.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<Guid>("DiscountId")
+                    b.Property<Guid?>("DiscountId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("ImagePath")
@@ -182,10 +182,10 @@ namespace TTS.Source.Persistance.RelationalDB.Migrations
                     b.Property<int?>("QuantityOfProductsPresentedForWholesale")
                         .HasColumnType("integer");
 
-                    b.Property<Guid>("ShelfId")
+                    b.Property<Guid?>("ShelfId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("SupplierId")
+                    b.Property<Guid?>("SupplierId")
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
@@ -381,7 +381,7 @@ namespace TTS.Source.Persistance.RelationalDB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Shelf");
+                    b.ToTable("Shelfs");
                 });
 
             modelBuilder.Entity("TTS.Source.Domain.Entities.Supplier", b =>
@@ -673,26 +673,21 @@ namespace TTS.Source.Persistance.RelationalDB.Migrations
                     b.HasOne("TTS.Source.Domain.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("TTS.Source.Domain.Entities.Discount", "Discount")
                         .WithMany("Products")
                         .HasForeignKey("DiscountId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("TTS.Source.Domain.Entities.Shelf", "Shelf")
                         .WithMany("Products")
                         .HasForeignKey("ShelfId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("TTS.Source.Domain.Entities.Supplier", "Supplier")
                         .WithMany()
-                        .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("SupplierId");
 
                     b.Navigation("Category");
 

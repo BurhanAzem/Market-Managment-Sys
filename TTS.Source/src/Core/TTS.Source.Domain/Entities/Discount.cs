@@ -5,6 +5,8 @@ namespace TTS.Source.Domain.Entities
 {
     public class Discount : BaseAggregateRoot<Guid>
     {
+        public Discount()
+        {}
         public Discount(decimal amount, DateTime startDate, DateTime endDate) 
         {
             Amount = amount;

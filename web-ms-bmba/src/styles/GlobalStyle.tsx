@@ -1,5 +1,5 @@
 import { createTheme } from "@mui/material/styles";
-import { blue, green, purple, } from "@mui/material/colors";
+import { blue, green, purple, yellow, } from "@mui/material/colors";
 
 export const theme = createTheme({
     components: {
@@ -36,22 +36,21 @@ export const theme = createTheme({
     palette: {
       primary: {//bgcolor
         main: '#f0c14b',
-        600: blue[600],
         700: blue[700],
         800: blue[800],
         900: blue[900],
-        A100: blue['A100'],
+        A100: '#ffc14b',
         A200: blue['A200'],
         light: "#ffffff",
         dark: "#232f3e",
       },
       secondary: {//color
-        main: '#FF8F00',
+        main: '#ff9900',
         light: "#607489",
         dark: "white",
       },
       info: {//header bgcolor
-        main: blue[100],
+        main: "#232f3e",
         200: blue[200],
         light: "#051e3932",
         dark: "#232f3e",
@@ -65,7 +64,9 @@ export const theme = createTheme({
         black: '#000000',
         white: '#ffffff',
       },
-      
+      action: {
+        hover: '#d9ac3b',
+      }
     },
   });
 

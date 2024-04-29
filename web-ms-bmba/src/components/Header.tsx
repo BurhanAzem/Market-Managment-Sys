@@ -16,14 +16,14 @@ export const Header: FC = (): ReactElement => {
         display: 'flex',
         alignItems: 'center',
         width: "100%",
-        height: 50,
+        height: 40,
         backgroundColor: isDark ? theme.palette.info.dark : theme.palette.info.light,
         boxShadow:15,
       }}
     >
-      <Container maxWidth="lg">
+      {/* <Container maxWidth="lg"> */}
             <Navbar />
-      </Container>
+      {/* </Container> */}
     </Box>
     );
   };

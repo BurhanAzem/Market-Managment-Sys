@@ -25,29 +25,6 @@ namespace TTS.Source.API.Features
         }
 
 
-        [HttpPost]
-        // [Route(nameof(Register))]
-        [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Register(
-            [FromBody] EmployeeRegisterRequest request,
-         CancellationToken cancellationToken)
-        {
-            var command = request.Adapt<UserRegisterCommand>();
-            var res = await _mediator.Send(command, cancellationToken);
-            return Ok(res);
-        }
-
-
-        [HttpPost]
-        [Route(nameof(Login))]
-        public async Task<ActionResult<UserResponseModel>> Login(UserLoginRequest request,
-         CancellationToken cancellationToken)
-        {
-            var command = request.Adapt<UserLoginCommand>();
-            var res = await _mediator.Send(command, cancellationToken);
-            return Ok(res);
-        }
-
+        
     }
 }

@@ -68,6 +68,8 @@ namespace TTS.Source.Persistance.RelationalDB.ServiceConfiguration
             services.AddScoped<IProjectMembershipRepository, ProjectMembershipRepository>();
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+
             
 
 

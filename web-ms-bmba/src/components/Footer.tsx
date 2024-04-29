@@ -12,12 +12,12 @@ export const Footer: FC = (): ReactElement => {
       sx={{
         width: "100%",
         height: "%8",
-        backgroundColor: isDark ? theme.palette.info.dark : theme.palette.info.light,
+        backgroundColor: isDark ? theme.palette.info.main : theme.palette.info.main,
       }}
     >
       <Container maxWidth="lg">
         <Grid container direction="column" alignItems="center">
-          <Grid item xs={12}>
+          <Grid item xs={12} m={1}>
             <Typography 
             color={ isDark ? theme.palette.success.dark : theme.palette.success.light} 
             variant="subtitle2">

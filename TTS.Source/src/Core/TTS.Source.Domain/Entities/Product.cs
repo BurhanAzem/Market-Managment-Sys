@@ -7,36 +7,36 @@ namespace TTS.Source.Domain.Entities
 {
     public class Product : BaseAggregateRoot<Guid>
     {
-        private Product() { }
+        public Product() { }
 
-        public Product(string name,
-            string description,
-            int BarCode)
-        {
-            Guard.Against.NullOrWhiteSpace(name, nameof(name));
-            // Guard.Against.Null(startDate, nameof(startDate));
-            // Guard.Against.Null(endDate, nameof(endDate));
-            // Guard.Against.OutOfRange(endDate, nameof(endDate), startDate.AddDays(1), DateOnly.MaxValue);
-            // Guard.Against.EnumOutOfRange(projectStatus);
-            // Guard.Against.Null(member, nameof(member));
+        // public Product(string name,
+        //     string description,
+        //     int BarCode)
+        // {
+        //     Guard.Against.NullOrWhiteSpace(name, nameof(name));
+        //     // Guard.Against.Null(startDate, nameof(startDate));
+        //     // Guard.Against.Null(endDate, nameof(endDate));
+        //     // Guard.Against.OutOfRange(endDate, nameof(endDate), startDate.AddDays(1), DateOnly.MaxValue);
+        //     // Guard.Against.EnumOutOfRange(projectStatus);
+        //     // Guard.Against.Null(member, nameof(member));
 
-            Name = name;
-            Description = description;
-            // BarCode = barCode;
-            CreatedDate = DateTime.Now;
-        }
-        public Supplier Supplier { get; set; } = null!;
-        public Guid SupplierId { get; set; }
-        public Shelf Shelf { get; set; } = null!;
-        public Guid ShelfId { get; set; }
-        public Discount Discount { get; set; } = null!;
-        public Guid DiscountId { get; set; }
-        public Category Category { get; set; } = null!;
-        public Guid CategoryId { get; set; }
+        //     Name = name;
+        //     Description = description;
+        //     // BarCode = barCode;
+        //     CreatedDate = DateTime.Now;
+        // }
+        public Supplier? Supplier { get; set; } = null!;
+        public Guid? SupplierId { get; set; }
+        public Shelf? Shelf { get; set; } = null!;
+        public Guid? ShelfId { get; set; }
+        public Discount? Discount { get; set; } = null!;
+        public Guid? DiscountId { get; set; }
+        public Category? Category { get; set; } = null!;
+        public Guid? CategoryId { get; set; }
         public string Name { get; set; } = null!;
         public string? Description { get; set; }
         public string? ImagePath { get; set; }
-        public int BarCode { get; set; }
+        public double BarCode { get; set; }
         public decimal? CurrentWholeSalePurchasingPrice { get; set; }
         public decimal? CurrentWholeSalSellingPrice { get; set; }
         public decimal? CurrentRetailPurchasingPrice { get; set; }

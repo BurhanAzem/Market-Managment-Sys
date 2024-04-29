@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Domain.Exceptions.Base;
+using TTS.Source.Application.Common.Exceptions;
 
 namespace Application.Exceptions;
 

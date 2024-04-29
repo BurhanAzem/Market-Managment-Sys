@@ -44,8 +44,32 @@ namespace TTS.Source.Persistance.RelationalDB.Identity.Services
             }
 
             var token = await _jwtGeneratorService.GenerateToken(user);
+            UserDto userDto = new UserDto()
+            {
+                Id = user.Id,
+                CreatedDate = user.CreatedDate,
 
-            return new UserResponseModel(user.Id, user.Email!, user.Email!, token);
+                CardId = user.CardId,
+                Discriminator = user.Discriminator,
+                ImagePath = user.ImagePath,
+                BirthDate = user.BirthDate,
+                UserName = user.UserName,
+                NormalizedUserName = user.NormalizedUserName,
+                Email = user.Email,
+                NormalizedEmail = user.NormalizedEmail,
+                EmailConfirmed = user.EmailConfirmed,
+                SecurityStamp = user.SecurityStamp,
+                ConcurrencyStamp = user.ConcurrencyStamp,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                TwoFactorEnabled = user.TwoFactorEnabled,
+                LockoutEnd = user.LockoutEnd,
+                LockoutEnabled = user.LockoutEnabled,
+                AccessFailedCount = user.AccessFailedCount,
+
+            };
+
+            return new UserResponseModel(userDto, token);
         }
 
         public async Task<UserResponseModel> SignUpAsync(User user, string password)
@@ -63,8 +87,30 @@ namespace TTS.Source.Persistance.RelationalDB.Identity.Services
             }
 
             var token = await _jwtGeneratorService.GenerateToken(user);
+            UserDto userDto = new UserDto()
+            {
+                Id = user.Id,
+                CreatedDate = user.CreatedDate,
+                CardId = user.CardId,
+                Discriminator = user.Discriminator,
+                ImagePath = user.ImagePath,
+                BirthDate = user.BirthDate,
+                UserName = user.UserName,
+                NormalizedUserName = user.NormalizedUserName,
+                Email = user.Email,
+                NormalizedEmail = user.NormalizedEmail,
+                EmailConfirmed = user.EmailConfirmed,
+                SecurityStamp = user.SecurityStamp,
+                ConcurrencyStamp = user.ConcurrencyStamp,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                TwoFactorEnabled = user.TwoFactorEnabled,
+                LockoutEnd = user.LockoutEnd,
+                LockoutEnabled = user.LockoutEnabled,
+                AccessFailedCount = user.AccessFailedCount,
 
-            return new UserResponseModel(user.Id, user.UserName, user.Email!, token);
+            };
+            return new UserResponseModel(userDto, token);
         }
 
         public async Task<User?> GetUserByEmailAddressAsync(string email)
