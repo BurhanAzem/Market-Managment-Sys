@@ -1,22 +1,22 @@
 export interface IUser {
-    Id: string
-    CreatedDate: Date
-    CardId: string
-    Discriminator: string
-    ImagePath: string
+    id: string
+    createdDate: Date
+    cardId: string
+    discriminator: string
+    imagePath: string
     BirthDate: Date
     userName: string
-    NormalizedUserName: string
-    Email: string
-    NormalizedEmail: string
-    EmailConfirmed: boolean
-    SecurityStamp: string
-    PhoneNumber: boolean
-    PhoneNumberConfirmed: boolean
-    ConcurrencyStamp: string
-    TwoFactorEnabled: boolean
-    LockoutEnd: Date
-    LockoutEnabled: boolean
-    AccessFailedCount: number
+    normalizedUserName: string
+    email: string
+    normalizedEmail: string
+    emailConfirmed: boolean
+    securityStamp: string
+    phoneNumber: boolean
+    phoneNumberConfirmed: boolean
+    concurrencyStamp: string
+    twoFactorEnabled: boolean
+    lockoutEnd: Date
+    lockoutEnabled: boolean
+    accessFailedCount: number
 }
 

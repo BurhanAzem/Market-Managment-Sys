@@ -18,10 +18,16 @@ export const Content: FC<ContentProps> = ({ children }): ReactElement => {
             minHeight: height,
             maxWidth: "100vw",
             flexGrow: 1,
-            backgroundColor: '#dcecfc'
+            // display: "flex",
+            justifyContent: "center",
+            width:{xs:'100%', sm:'95%', md:'93%', lg:'93%', xl:'93%'}, 
+            // height:{xs:'100%', sm:'95%', md:'93%', lg:'93%', xl:'93%'}, 
+            mt:'40px',
+            mx:'auto', 
+            // backgroundColor: 'white'
         }}
     >
-      <Card
+      {/* <Card
         sx={{
           display:'flex',
           justifyContent:'center',
@@ -33,9 +39,9 @@ export const Content: FC<ContentProps> = ({ children }): ReactElement => {
           // "10px 10px 10px #b6d4f9",
           // backgroundColor:'#e8f1fc',
         }}
-      >
+      > */}
         {children}
-      </Card>
+      {/* </Card> */}
     </Box>
   )
 }

@@ -35,7 +35,7 @@ export const theme = createTheme({
     },
     palette: {
       primary: {//bgcolor
-        main: '#f0c14b',
+        main: '#FF8F00',
         700: blue[700],
         800: blue[800],
         900: blue[900],
@@ -45,7 +45,7 @@ export const theme = createTheme({
         dark: "#232f3e",
       },
       secondary: {//color
-        main: '#ff9900',
+        main: '#f0c14b',
         light: "#607489",
         dark: "white",
       },
@@ -65,7 +65,7 @@ export const theme = createTheme({
         white: '#ffffff',
       },
       action: {
-        hover: '#d9ac3b',
+        hover: '#dc7d04',
       }
     },
   });

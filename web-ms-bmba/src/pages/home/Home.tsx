@@ -50,7 +50,7 @@ const Home: FC = (): ReactElement => {
             <Typography sx={{ fontSize: '15px', }}>
               Totale operation price
             </Typography>
-            <Typography sx={{ fontSize: '60px' }}>
+            <Typography sx={{ fontSize: '60px', color: 'black' }}>
               0.0
             </Typography>
             {/* <MealOrderStatistics/> */}

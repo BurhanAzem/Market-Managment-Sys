@@ -124,7 +124,7 @@ const SideBar: FC = (): ReactElement => {
         <MenuItem
           style={{ fontSize: '12px' }}
           icon={<Category style={{ width: '18px', color: isDark ? theme.palette.primary.dark : theme.palette.primary.light }} />}
-          onClick={() => (navigate('Products', { replace: true }))}
+          onClick={() => (navigate('products'))}
           onMouseUp={() => menuItemMouseUpHandler('Products')}
         >
           Products

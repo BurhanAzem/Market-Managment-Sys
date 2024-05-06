@@ -4,9 +4,12 @@ import _ from 'lodash';
 import { Action, ActionType } from '../actionTypes/productActionTypes';
 import { ICompany as Company } from '../../models/company';
 import { IProduct } from '../../models/product';
+import { IProductsRes } from '../../models/productRes';
 
 export interface IProductsState {
-    products: IProduct[] | null;
+    products: IProduct[];
+    pageNumber: number;
+    totalPages: number;
     product: IProduct | null;
     loading: boolean;
     isAddProductModalOpen: boolean;
@@ -14,6 +17,8 @@ export interface IProductsState {
     error: String | null,
 }
 const initialState = {
+    pageNumber: 1,
+    totalPages: 1,
     products: [],
     product: null,
     loading: false,
@@ -26,8 +31,29 @@ export const ProductReducer: Reducer<IProductsState, Action> = (
     action
 ) => {
     switch (action.type) {
+        case ActionType.FETCH_PRODUCTS_SUCCESS:
+            console.log(action.payload);
+            return {
+                ...state,
+                products: action.payload.products,
+                pageNumber: action.payload.pageNumber,
+                totalPages: action.payload.totalPages,
+                loading: false
+            };
         case ActionType.FETCH_PRODUCT:
         case ActionType.FETCH_PRODUCTS:
+            return {
+                ...state,
+                loading: true
+            };
+
+        case ActionType.FETCH_PRODUCTS_FAIL:
+            return {
+                ...state,
+                error: action.payload,
+                loading: false
+            };
+
         case ActionType.ADD_PRODUCT:
         case ActionType.OPEN_ADD_PRODUCT_MODAL:
             return {
@@ -54,7 +80,7 @@ export const ProductReducer: Reducer<IProductsState, Action> = (
 
 
         case ActionType.FETCH_PRODUCT_FAIL:
-        case ActionType.FETCH_PRODUCTS_FAIL:
+
         case ActionType.ADD_PRODUCT_FAIL:
         case ActionType.EDIT_PRODUCT_FAIL:
         case ActionType.DELETE_PRODUCT_FAIL:
@@ -65,7 +91,7 @@ export const ProductReducer: Reducer<IProductsState, Action> = (
 
         case ActionType.EDIT_PRODUCT_SUCCESS:
 
-        case ActionType.FETCH_PRODUCTS_SUCCESS:
+
 
 
         case ActionType.DELETE_PRODUCT_SUCCESS:

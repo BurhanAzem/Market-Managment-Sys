@@ -1,4 +1,4 @@
 export interface IShelf {
-    ShelfCode: string
+    shelfCode: string
 
 }

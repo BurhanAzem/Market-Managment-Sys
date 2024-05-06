@@ -10,13 +10,16 @@ export const Main: FC<MainProps> = ({ children }): ReactElement => {
     <Box
       id="Main"
       sx={{
-          display: "flex",
-          flexDirection: "column",
+          // display: "flex",
+          alignItems: 'center',
+          // flexDirection: "column",
           justifyContent: "flex-start",
           overflowY: "auto",
           minHeight: "100vh",
           maxWidth: "100vw",
           flexGrow: 1,
+          backgroundColor: '#eef0f2'
+
       }}
     >
       {children}

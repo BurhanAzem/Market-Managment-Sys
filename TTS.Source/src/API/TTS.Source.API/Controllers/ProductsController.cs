@@ -12,11 +12,11 @@ namespace TTS.Source.API.Features
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
         private readonly IMediator _mediator;
         private readonly IEmailSender _emailSender;
-        public ProductController(IMediator mediator,
+        public ProductsController(IMediator mediator,
             IEmailSender emailSender)
         {
             _mediator = mediator;
@@ -34,6 +34,17 @@ namespace TTS.Source.API.Features
         {
             var command = request.Adapt<AddProductCommand>();
             var res = await _mediator.Send(command, cancellationToken);
+            return Ok(res);
+        }
+
+        [HttpGet()]
+        [ProducesResponseType(typeof(GetProductsResponse), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetProductsByFilters(
+                    [FromQuery] GetProductsQuery request,
+                 CancellationToken cancellationToken)
+        {
+            var res = await _mediator.Send(request, cancellationToken);
             return Ok(res);
         }
 

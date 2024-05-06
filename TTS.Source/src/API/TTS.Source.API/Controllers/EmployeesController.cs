@@ -13,11 +13,11 @@ namespace TTS.Source.API.Features
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class EmployeeController : ApiController
+    public class EmployeesController : ApiController
     {
         private readonly IMediator _mediator;
         private readonly IEmailSender _emailSender;
-        public EmployeeController(IMediator mediator,
+        public EmployeesController(IMediator mediator,
             IEmailSender emailSender)
         {
             _mediator = mediator;

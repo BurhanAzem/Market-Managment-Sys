@@ -197,7 +197,7 @@ const Navbar: FC = (): ReactElement => {
                   sx={{
                     backgroundColor: 'primary.main',
                     fontSize: { xs: '9pt', sm: '7pt', md: '8pt' },
-                    borderRadius: '4px',
+                    borderRadius: '2px',
                     textTransform: 'inherit',
                     height: '22px',
                     fontWeight: '600',

@@ -1,7 +1,7 @@
 export interface ISupplier {
-      Name : string
-      Email : string
-      PhoneNumber : number
-      CreatedDate : Date
-      Address : string
+      name : string
+      email : string
+      phoneNumber : number
+      createdDate : Date
+      address : string
 }

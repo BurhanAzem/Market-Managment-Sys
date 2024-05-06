@@ -1,5 +1,5 @@
 export interface IDiscount {
-    Amount: number
-    StartDate: Date
-    EndDate: Date
+    amount: number
+    startDate: Date
+    endDate: Date
 }

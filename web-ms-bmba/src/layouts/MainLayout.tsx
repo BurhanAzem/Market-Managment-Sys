@@ -21,7 +21,6 @@ const Layout: FC<LayoutProps> = ({ children }): ReactElement => {
       flexGrow: 1
     }} >
       <Header />
-
       <Box
         sx={{
           display: "flex",
@@ -30,7 +29,6 @@ const Layout: FC<LayoutProps> = ({ children }): ReactElement => {
         }}
       >
         <CssBaseline />
-
         <SideBar />
         <Main >
           <Content>

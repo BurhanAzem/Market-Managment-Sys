@@ -1,5 +1,6 @@
 // import { Dashboard } from "@mui/icons-material";
 import async from "../components/Async";
+import AddProduct from "../pages/Products/AddProduct";
 import { IRoute } from "../types/RouteType";
 
 
@@ -52,9 +53,17 @@ export const routes: Array<IRoute> = [
     {
         key: 'Products-route',
         title: 'Products',
-        path: 'Products',
+        path: 'products',
         enabled: true,
         component: Products
+    },
+
+    {
+        key: 'AddProduct-route',
+        title: 'AddProduct',
+        path: 'products/addProduct',
+        enabled: true,
+        component: AddProduct
     },
 
     //------------------Restaurant---------------------

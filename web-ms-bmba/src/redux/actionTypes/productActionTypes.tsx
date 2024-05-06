@@ -1,5 +1,5 @@
-import { ICompany as Company } from '../../models/company';
 import { IProduct } from '../../models/product';
+import { IProductsRes } from '../../models/productRes';
 
 
 export enum ActionType {
@@ -35,7 +35,7 @@ export interface IFetchProducts {
 }
 export interface IFetchProductsSuccess {
     type: ActionType.FETCH_PRODUCTS_SUCCESS;
-    payload: IProduct[];
+    payload: IProductsRes;
 }
 export interface IFetchProductsFail {
     type: ActionType.FETCH_PRODUCTS_FAIL;
