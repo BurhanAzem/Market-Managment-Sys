@@ -9,54 +9,101 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DemoItem } from "@mui/x-date-pickers/internals/demo";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
-import { FC, ReactElement, forwardRef, useState } from "react";
+import { FC, ReactElement, forwardRef, useEffect, useState } from "react";
 
 
 const today = dayjs();
 const yesterday = dayjs().subtract(1, "day");
 
-const AddProductModal: FC = (): ReactElement => {
-  
-  const [newProjectForm, setNewProjectForm] = useState({
+export default function AddSupplierModal({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;// Assuming projectId is of type string
+}) {
+  const [newTicketForm, setNewTicketForm] = useState({
+    projectId: '',
+    assigneeId: "",
     name: "",
     description: "",
     startDate: "",
-    endDate: "",
-    projectStatus: "",
+    dueDate: "",
+    ticketPriority: "",
+    ticketStatus: "",
   });
 
   const [isLoading, setIsLoading] = useState(false);
-  const handleClose = () => {
-    // setNewProjectForm({
-    //   name: "",
-    //   description: "",
-    //   startDate: "",
-    //   endDate: "",
-    //   projectStatus: "",
-    // });
-    // setOpen(false);
-  };
+  const [selectedAssignee, setSelectedAssignee] = useState({});
+  const [members, setMembers] = useState([]);
 
+  useEffect(() => {
+  }, []);
 
+  // const submitForm = async () => {
+  //   e.preventDefault();
+   
+  // };
 
+  // const handleClose = () => {
+  //   setNewTicketForm({
+  //     projectId: "",
+  //     assigneeId: "",
+  //     name: "",
+  //     description: "",
+  //     startDate: "",
+  //     dueDate: "",
+  //     ticketPriority: "",
+  //     ticketStatus: "",
+  //   });
+  //   setOpen(false);
+  // };
+  // const handlePriorityChange = (e) => {
+  //   setNewTicketForm({ ...newTicketForm, ticketPriority: e.target.value });
+  // };
+
+  // const handleStatusChange = (e) => {
+  //   setNewTicketForm({ ...newTicketForm, ticketStatus: e.target.value });
+  // };
+
+  // const handleAssigneeChange = (e) => {
+  //   console.log(e.target.value);
+  //   setNewTicketForm({ ...newTicketForm, assigneeId: e.target.value.id });
+  //   setSelectedAssignee(e.target.value);
+  // };
+
+  // const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  // const letterToColorMapping = {};
+  // for (const letter of letters) {
+  //   letterToColorMapping[letter] = {
+  //     backgroundColor: getRandomColor(),
+  //     color: "#fff",
+  //   };
+  // }
+
+  // function getRandomColor() {
+  //   return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+  // }
 
   return (
     <div>
       <Modal
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
-        open={true}
-        onClose={handleClose}
+        open={open}
+        // onClose={handleClose}
         closeAfterTransition
         // slots={{ backdrop: StyledBackdrop }}
       >
+
+
         <MUI.Fade in={true}>
           <ModalContent sx={style}>
             <MUI.Stack py={0} direction="row" justifyContent="space-between">
               <MUI.Typography variant="h6" id="transition-modal-title">
                 Create a new project
               </MUI.Typography>
-              <MUI.Button sx={{ color: "#000" }} onClick={handleClose}>
+              <MUI.Button sx={{ color: "#000" }} >
                 <CloseIcon />
               </MUI.Button>
             </MUI.Stack>
@@ -69,26 +116,26 @@ const AddProductModal: FC = (): ReactElement => {
                   label="Name"
                   variant="outlined"
                   size="small"
-                  value={newProjectForm.name}
-                  onChange={(e) =>
-                    setNewProjectForm({
-                      ...newProjectForm,
-                      name: e.target.value,
-                    })
-                  }
+                  // value={newProjectForm.name}
+                  // onChange={(e) =>
+                  //   setNewProjectForm({
+                  //     ...newProjectForm,
+                  //     name: e.target.value,
+                  //   })
+                  // }
                 />
                 <MUI.TextField
                   required
                   id="outlined-basic"
                   label="Description"
                   variant="outlined"
-                  value={newProjectForm.description}
-                  onChange={(e) =>
-                    setNewProjectForm({
-                      ...newProjectForm,
-                      description: e.target.value,
-                    })
-                  }
+                  // value={newProjectForm.description}
+                  // onChange={(e) =>
+                  //   setNewProjectForm({
+                  //     ...newProjectForm,
+                  //     description: e.target.value,
+                  //   })
+                  // }
                   multiline
                   rows={4}
                 />
@@ -138,7 +185,7 @@ const AddProductModal: FC = (): ReactElement => {
                     Add
                   </LoadingButton>
                   <MUI.Button
-                    onClick={handleClose}
+                    // onClick={handleClose}
                     variant="outlined"
                     color="error"
                   >

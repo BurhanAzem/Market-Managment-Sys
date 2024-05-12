@@ -66,7 +66,7 @@ const Navbar: FC = (): ReactElement => {
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Typography >
             <img
-            onClick={() => navigate('/')}
+              onClick={() => navigate('/')}
               style={{ width: '80px', display: 'flex', alignItems: 'center', cursor: 'pointer' }}
               src={burhan_logo}
               alt='avatar'
@@ -107,7 +107,7 @@ const Navbar: FC = (): ReactElement => {
             </IconButton>)}
         </Box>
         <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end', mr: 3 }}>
-          
+
           <Box onClick={() => navigate('/config')} sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
             <Settings sx={{
               m: 'auto',
@@ -166,23 +166,22 @@ const Navbar: FC = (): ReactElement => {
                       >
                         {user && user.userName}
                       </Typography>
-                      {/* <Avatar sx={{ width: 30, height: 30, m: 0, p: 0 }}
-            src='https://avatars.githubusercontent.com/u/47317870?s=400&u=79da86747deb409779c3575c0da73d90ad65fe81&v=4'
-            alt='avatar'
-          /> */}
                       {value}
                     </>
                   </Box>
                 );
               }}
             >
-              {/* Add your <MenuItem> components here */}
 
               <MenuItem>Settings</MenuItem>
-              <MenuItem>Logout</MenuItem>
+              <MenuItem>
+                <Box onClick={() => { handleLogout() }} display='block' justifyContent='center' alignItems='center' pt={2.25} >
+                  {t("logout-button")}
+                </Box>
+              </MenuItem>
             </Select>
           </Box>
-          <Box >
+          {/* <Box >
             {!isAuthenticated ?
               <Box display='block' justifyContent='center' py={2} >
                 <Button fullWidth variant="contained" color="primary" size='small'
@@ -210,7 +209,7 @@ const Navbar: FC = (): ReactElement => {
                 >{t("logout-button")}</Button>
               </Box>
             }
-          </Box>
+          </Box> */}
         </Box>
 
       </Toolbar>
@@ -221,70 +220,3 @@ const Navbar: FC = (): ReactElement => {
 export default Navbar;
 
 
-
-
-
-
-
-
-// {/* <ConsoleLog title={'navbarSelect height'} message={document.getElementById("navbarSelect")?.clientHeight.toString()}/> */}
-
-//   {/* <Menu
-//     id="menu-appbar"
-//     anchorEl={anchorElNav}
-//     anchorOrigin={{
-//       vertical: "bottom",
-//       horizontal: "left",
-//     }}
-//     keepMounted
-//     transformOrigin={{
-//       vertical: "top",
-//       horizontal: "left",
-//     }}
-//     open={Boolean(anchorElNav)}
-//     onClose={toggle}
-//     sx={{
-//       display: { xs: "block", md: "none" },
-//     }}
-//   >
-//     {routes.map((page) => (
-//       <Link
-//         key={page.key}
-//         component={NavLink}
-//         to={page.path}
-//         color="black"
-//         underline="none"
-//         variant="button"
-//       >
-//         <MenuItem onClick={toggle}>
-//           <Typography textAlign="center">{page.title}</Typography>
-//         </MenuItem>
-//       </Link>
-//     ))}
-//   </Menu>
-// </Box>*/}
-// {/*<Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-//    <Box
-//     sx={{
-//       display: "flex",
-//       flexDirection: "row",
-//       justifyContent: "flex-start",
-//       alignItems: "center",
-//       marginLeft: "1rem",
-//     }}
-//   >
-//     {routes.map((page) => (
-//       <Link
-//         key={page.key}
-//         component={NavLink}
-//         to={page.path}
-//         color="black"
-//         underline="none"
-//         variant="button"
-//         sx={{ fontSize: "large", marginLeft: "2rem" }}
-//       >
-//         {page.title}
-//       </Link>
-//     ))}
-//   </Box>
-// </Box>*/}

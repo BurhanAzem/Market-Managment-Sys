@@ -4,25 +4,25 @@ import { IShelf } from "./shelf"
 import { ISupplier } from "./supplier"
 
 export interface IProduct {
-    supplier: ISupplier
-    supplierId: number
-    shelfDto: IShelf
-    shelfId: number
-    discountDto: IDiscount
-    discountId: number
-    categoryDto: ICategory
-    categoryId: number
+    supplier?: ISupplier
+    supplierId?: number
+    shelfDto?: IShelf
+    shelfId?: number
+    discountDto?: IDiscount
+    discountId?: number
+    categoryDto?: ICategory
+    categoryId?: number
     name: string
-    description: string
-    imagePath: string
+    description?: string
+    imagePath?: string
     barCode: number
-    currentWholeSalePurchasingPrice: number
-    currentWholeSalSellingPrice: number
+    currentWholeSalePurchasingPrice?: number
+    currentWholeSalSellingPrice?: number
     currentRetailPurchasingPrice: number
     currentRetailSellingPrice: number
-    quantityOfProductsPresentedForRetail: number
-    quantityOfProductsPresentedForWholesale: number
-    minimumQuantityOfProductsPresentedForRetail: number
-    minimumQuantityOfProductsPresentedForWholesale: number
-    createdDate: Date
+    quantityOfProductsPresentedForRetail?: number
+    quantityOfProductsPresentedForWholesale?: number
+    minimumQuantityOfProductsPresentedForRetail?: number
+    minimumQuantityOfProductsPresentedForWholesale?: number
+    createdDate?: Date
 }

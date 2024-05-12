@@ -73,6 +73,29 @@ export const getProducts = (query: {
         });
     }
 }
+
+export const addProduct = (product: IProduct): ThunkAction<Promise<void>, RootState, unknown, AnyAction> =>
+    async (
+      dispatch: ThunkDispatch<RootState, unknown, AnyAction>
+    ): Promise<void> => { 
+    dispatch<IAddProduct>({ 
+        type: ActionType.ADD_PRODUCT
+    });
+    try {
+        const response: AxiosResponse<IProduct> = await axios.post(`/products`, product);
+        dispatch<IAddProductSuccess>({
+            type: ActionType.ADD_PRODUCT_SUCCESS,
+            payload: response.data  
+        });
+
+    } catch(err:any) {
+        dispatch<IAddProductFail>({
+            type: ActionType.ADD_PRODUCT_FAIL,
+            payload: err
+        });
+    }
+};
+
 // export const getProduct = (id: number): ThunkResult<void> => async (dispatch: Dispatch<Action>) => { 
 //     dispatch<IFetchProduct>({
 //         type: ActionType.FETCH_PRODUCT
@@ -92,24 +115,7 @@ export const getProducts = (query: {
 //         });
 //     }
 // }
-// export const addProduct = (company: IProduct): ThunkResult<void> => async (dispatch: Dispatch<Action>) => { 
-//     dispatch<IAddProduct>({ 
-//         type: ActionType.ADD_PRODUCT
-//     });
-//     try {
-//         const response: AxiosResponse<IProduct> = await axios.post(`/companies`, company);
-//         dispatch<IAddProductSuccess>({
-//             type: ActionType.ADD_PRODUCT_SUCCESS,
-//             payload: response.data  
-//         });
 
-//     } catch(err:any) {
-//         dispatch<IAddProductFail>({
-//             type: ActionType.ADD_PRODUCT_FAIL,
-//             payload: err
-//         });
-//     }
-// };
 // export const editProduct = (editedCompany: IProduct): ThunkResult<void> => async (dispatch: Dispatch<Action>) => { 
 //     dispatch<IEditProduct>({ type: ActionType.EDIT_PRODUCT });
 //     try {

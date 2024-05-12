@@ -55,6 +55,10 @@ export const ProductReducer: Reducer<IProductsState, Action> = (
             };
 
         case ActionType.ADD_PRODUCT:
+            return {
+                ...state,
+                loading: true
+            };
         case ActionType.OPEN_ADD_PRODUCT_MODAL:
             return {
                 ...state,

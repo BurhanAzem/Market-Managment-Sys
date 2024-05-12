@@ -18,6 +18,7 @@ export const Content: FC<ContentProps> = ({ children }): ReactElement => {
             minHeight: height,
             maxWidth: "100vw",
             flexGrow: 1,
+            overflowX: 'auto',
             // display: "flex",
             justifyContent: "center",
             width:{xs:'100%', sm:'95%', md:'93%', lg:'93%', xl:'93%'}, 

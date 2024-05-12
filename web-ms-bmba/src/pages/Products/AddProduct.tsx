@@ -1,5 +1,5 @@
 import { ReactElement, FC } from "react";
-import { Box, Button, Checkbox, CircularProgress, Divider, Grid, Pagination, PaginationItem, Paper, Stack, TextField, Typography, styled } from "@mui/material";
+import { Autocomplete, Box, Button, Checkbox, CircularProgress, Divider, Grid, Pagination, PaginationItem, Paper, Stack, TextField, Typography, styled } from "@mui/material";
 import MediaCard from "../home/MediaCard";
 import * as React from 'react';
 import Table from '@mui/material/Table';
@@ -18,7 +18,7 @@ import { RootState } from "../../redux/store/store";
 import { RootActions } from "../../redux/actionCreators/actionResultTypes";
 import { ThunkDispatch } from "redux-thunk";
 import { useDispatch, useSelector } from "react-redux";
-import { getProducts } from "../../redux/actionCreators/productActions";
+import { addProduct, getProducts } from "../../redux/actionCreators/productActions";
 import { IProduct } from "../../models/product";
 import { IProductsRes } from "../../models/productRes";
 import ReplayIcon from '@mui/icons-material/Replay';
@@ -27,6 +27,13 @@ import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { ISupplier } from "../../models/supplier";
+import { IShelf } from "../../models/shelf";
+import { IDiscount } from "../../models/discount";
+import { ICategory } from "../../models/category";
+import { parse } from "path";
+import AddSupplierModal from "../../modals/AddSupplierModal";
+import { DemoItem } from "@mui/x-date-pickers/internals/demo";
 
 function createData(
   name: string,
@@ -38,13 +45,6 @@ function createData(
   return { name, calories, fat, carbs, protein };
 }
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode !== 'dark' ? 'whitesmoke' : '#fff',
   ...theme.typography.body2,
@@ -76,341 +76,674 @@ const AddProduct: FC = (): ReactElement => {
   // const productsRes: IProductsRes | null = useSelector(
   //   (state: RootState) => state.product.productsRes);
 
-  const products: IProduct[] | null = useSelector(
-    (state: RootState) => state.product.products);
 
-  const currPageNumber: number = useSelector(
-    (state: RootState) => state.product.pageNumber);
-
-  const totalPages: number = useSelector(
-    (state: RootState) => state.product.totalPages);
 
   const isLoading: Boolean | null = useSelector(
     (state: RootState) => state.product.loading);
 
   const theme = useTheme();
-  const [productName, setProductName] = React.useState("");
-  const [categoryName, setCategoryName] = React.useState("");
-  const [supplierName, setSupplierName] = React.useState("");
-  const [selfCode, setSelfCode] = React.useState("");
-  const [pageSize, setPageSize] = React.useState(10);
-  const [pageNumber, setPageNumber] = React.useState(1);
+  const [categories, setCategories] = React.useState([]);
+  const [suppliers, setSuppliers] = React.useState([]);
+  const [shelfs, setShelfs] = React.useState([]);
+  const [open, setOpen] = React.useState(true);
 
-  const [checkedRows, setCheckedRows] = React.useState<number[]>([]);
+
+
+
+  const [product, setProduct] = React.useState<IProduct>({
+    supplier: {} as ISupplier,
+    supplierId: 0,
+    shelfDto: {} as IShelf,
+    shelfId: 0,
+    discountDto: {} as IDiscount,
+    discountId: 0,
+    categoryDto: {} as ICategory,
+    categoryId: 0,
+    name: '',
+    description: '',
+    imagePath: '',
+    barCode: 0,
+    currentWholeSalePurchasingPrice: 0,
+    currentWholeSalSellingPrice: 0,
+    currentRetailPurchasingPrice: 0,
+    currentRetailSellingPrice: 0,
+    quantityOfProductsPresentedForRetail: 0,
+    quantityOfProductsPresentedForWholesale: 0,
+    minimumQuantityOfProductsPresentedForRetail: 0,
+    minimumQuantityOfProductsPresentedForWholesale: 0,
+  });
+
   const [age, setAge] = React.useState('');
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value);
   };
-  const RowToCheckedList = (row: any) => {
-    setCheckedRows(prevCheckedRows => {
-      // Check if the row's barCode is already present in checkedRows
-      const isChecked = prevCheckedRows.includes(row.barCode);
 
-      // Toggle the checked status for the row by adding or removing its barCode
-      if (isChecked) {
-        // Remove the barCode from checkedRows
-        return prevCheckedRows.filter(code => code !== row.barCode);
-      } else {
-        // Add the barCode to checkedRows
-        return [...prevCheckedRows, row.barCode];
-      }
-    });
-  };
-
-  const allRowsToCheckedList = () => {
-    setCheckedRows(prevCheckedRows => {
-      // Check if the row's barCode is already present in checkedRows
-      const isChecked = prevCheckedRows.includes(products[0].barCode);
-
-      // Toggle the checked status for the row by adding or removing its barCode
-      if (isChecked) {
-        // Remove the barCode from checkedRows
-        return prevCheckedRows.filter(
-          code => ![...products.map(prod => prod.barCode)].includes(code)
-        );
-      } else {
-        // Add the barCode to checkedRows
-        return [...prevCheckedRows, ...products.map(prod => prod.barCode)];
-      }
-    });
-  };
-
-
-  const query = {
-    productName,
-    categoryName,
-    selfCode,
-    supplierName,
-    pageNumber,
-    pageSize,
-  };
 
   React.useEffect(() => {
-    // Dispatch the action with the query object
-    dispatch(getProducts(query));
 
-    console.log(products);
+    dispatch(addProduct(product));
 
-  }, [dispatch, productName,
-    categoryName,
-    selfCode,
-    supplierName,
-    pageNumber,
-    pageSize]); // Include dispatch and query in the dependency array
+    console.log(product);
 
-  // const addItemToCheckedProducts = (product: IProduct) => {
-  //   setCheckedProducts(prevCheckedProducts => [...prevCheckedProducts, product]);
-  // }
-
+  }, [dispatch, product]);
 
   return (
-    <Grid container direction='column' height='auto' width='100%' mt='10px'>
-      <Grid item xs={12} sm={6} md={6} ml='0px'
-        display='flex' justifyContent='center' flexDirection='column' alignItems='center' height='auto'>
-        <Box sx={{ fontSize: { xs: '7pt', sm: '8pt', md: '9pt' }, fontWeight: '600', width: '100%', backgroundColor: '#f7f7f7', mt: '15px' }}
-          display="flex" flexDirection="column" justifyContent="start" alignItems="start" width="100%" py='12px' px='12px'>
+    <Grid container direction='column' height='auto' mb='40'>
+      <AddSupplierModal open={false} setOpen={setOpen} />
+      <Grid item xs={12} sm={6} md={3} ml='0px' direction='column'>
+        <Box sx={{ fontSize: { sm: '9pt', md: '10pt' }, fontWeight: '600', backgroundColor: '#f7f7f7' }}
+          display="flex" flexDirection="column" justifyContent="start" alignItems="start" py='12px' px='12px'>
           Product details
         </Box>
-        <Box display='flex' justifyContent='space-around' flexDirection='row' alignItems='center' sx={{ mx: '6px', my: '0px', backgroundColor: 'white', width: '100%' }}>
-          <Box sx={{ mx: '6px', my: '0px' }}>
-            <Stack>
-              <label style={labelStyle}>Product name</label>
-              <input type="text" style={textFieldStyle} value={productName} />
-            </Stack>
-          </Box>
-          <Box sx={{ mx: '6px', my: '20px' }}>
-            <Stack>
-              <label style={labelStyle}>BarCode</label>
-              <input type="text" style={textFieldStyle} value={productName} />
-            </Stack>
-          </Box>
-          <Box sx={{ mx: '6px', my: '20px' }}>
-            <Stack>
-              <label style={labelStyle}>Description</label>
-              <input type="text" style={textFieldStyle} value={productName} />
-            </Stack>
-          </Box>
-        </Box>
+        <Grid item container direction='row' xs={12} spacing={1} pb={2} justifyContent='center' sx={{ backgroundColor: 'white' }}>
+          {/* <Grid item container direction='column' xs={12} sm={8} md={8} spacing={1} pb={2} width='100%' justifyContent='center' alignItems='center' sx={{ backgroundColor: 'white' }}> */}
+          {/* <Grid item container direction='row' xs={12} sm={6} md={6} spacing={1} pb={0} width='100%' justifyContent='space-around' sx={{ backgroundColor: 'white' }}>
+              <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={12} md={3}>
+                <Box sx={{ mx: '20px', my: '5px' }}>
+                  <DemoItem sx={{ padding: '0px' }} label="Name">
+                    <TextField
+                      required
+                      id="outlined-basic"
+                      // label="Name"
+                      variant="outlined"
+                      size="small" style={{}}
+
+                      InputLabelProps={{
+                        style: {
+                          height: '30px',
+                          fontSize: '10px',
+                        },
+                      }}
+
+                      inputProps={{
+                        style: {
+                          height: '30px',
+                          width: '250px',
+                          padding: '0 14px',
+                        },
+                      }} value={product.name} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, name: event.target.value }))} />
+
+                  </DemoItem>
+                </Box>
+              </Grid>
+              <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={12} md={4}>
+                <Box sx={{ mx: '6px', my: '5px' }}>
+                  <DemoItem sx={{ padding: '0px' }} label="BarCode">
+                    <TextField
+                      required
+                      id="outlined-basic"
+                      // label="Name"
+                      variant="outlined"
+                      size="small" style={{}}
+
+                      InputLabelProps={{
+                        style: {
+                          height: '30px',
+                          fontSize: '10px',
+                        },
+                      }}
+
+                      inputProps={{
+                        style: {
+                          height: '30px',
+                          width: '250px',
+                          padding: '0 14px',
+                        },
+                      }} value={product.currentRetailSellingPrice} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, currentRetailSellingPrice: parseFloat(event.target.value) }))} />
+
+                  </DemoItem>
+                </Box>
+              </Grid>
+            </Grid>
+            <Grid item container direction='row' xs={12} sm={6} md={6} spacing={1} pb={0} width='100%' justifyContent='space-around' sx={{ backgroundColor: 'white' }}>
+              <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={12} md={3}>
+                <Box sx={{ mx: '20px', my: '5px' }}>
+                  <DemoItem sx={{ padding: '0px' }} label="Current retail purchasing price">
+                    <TextField
+                      required
+                      id="outlined-basic"
+                      // label="Name"
+                      variant="outlined"
+                      size="small" style={{}}
+
+                      InputLabelProps={{
+                        style: {
+                          height: '30px',
+                          fontSize: '10px',
+                        },
+                      }}
+
+                      inputProps={{
+                        style: {
+                          height: '30px',
+                          width: '250px',
+                          padding: '0 14px',
+                        },
+                      }} value={product.currentRetailPurchasingPrice} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, currentRetailPurchasingPrice: parseFloat(event.target.value) }))} />
+
+                  </DemoItem>
+                </Box>
+              </Grid>
+              <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={12} md={4}>
+                <Box sx={{ mx: '6px', my: '5px' }}>
+                  <DemoItem sx={{ padding: '0px' }} label="Current retail selling price">
+                    <TextField
+                      required
+                      id="outlined-basic"
+                      // label="Name"
+                      variant="outlined"
+                      size="small" style={{}}
+
+                      InputLabelProps={{
+                        style: {
+                          height: '30px',
+                          fontSize: '10px',
+                        },
+                      }}
+
+                      inputProps={{
+                        style: {
+                          height: '30px',
+                          width: '250px',
+                          padding: '0 14px',
+                        },
+                      }} value={product.barCode} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, barCode: parseFloat(event.target.value) }))} />
+
+                  </DemoItem>
+                </Box>
+              </Grid>
+            </Grid>
+          </Grid> */}
+          <Grid item container direction='row' xs={12} sm={8} md={8} spacing={1} pb={0} mb='60px' justifyContent='center' sx={{ backgroundColor: 'white' }}>
+            <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+              <Box sx={{ mx: '6px', my: '5px' }}>
+                <DemoItem sx={{ padding: '0px' }} label="Name">
+                  <TextField
+                    required
+                    id="outlined-basic"
+                    // label="Name"
+                    variant="outlined"
+                    size="small" style={{}}
+
+                    InputLabelProps={{
+                      style: {
+                        height: '30px',
+                        fontSize: '10px',
+                      },
+                    }}
+
+                    inputProps={{
+                      style: {
+                        height: '30px',
+                        width: '250px',
+                        padding: '0 14px',
+                      },
+                    }} value={product.name} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, name: event.target.value }))} />
+
+                </DemoItem>
+              </Box>
+            </Grid>
+            <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+              <Box sx={{ mx: '6px', my: '5px' }}>
+                <DemoItem sx={{ padding: '0px' }} label="BarCode">
+                  <TextField
+                    required
+                    id="outlined-basic"
+                    // label="Name"
+                    variant="outlined"
+                    size="small" style={{}}
+
+                    InputLabelProps={{
+                      style: {
+                        height: '30px',
+                        fontSize: '10px',
+                      },
+                    }}
+
+                    inputProps={{
+                      style: {
+                        height: '30px',
+                        width: '250px',
+                        padding: '0 14px',
+                      },
+                    }} value={product.currentRetailSellingPrice} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, currentRetailSellingPrice: parseFloat(event.target.value) }))} />
+
+                </DemoItem>
+              </Box>
+            </Grid>
+
+            <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+              <Box sx={{ mx: '6px', my: '5px' }}>
+                <DemoItem sx={{ padding: '0px' }} label="Current retail purchasing price">
+                  <TextField
+                    required
+                    id="outlined-basic"
+                    // label="Name"
+                    variant="outlined"
+                    size="small" style={{}}
+
+                    InputLabelProps={{
+                      style: {
+                        height: '30px',
+                        fontSize: '10px',
+                      },
+                    }}
+
+                    inputProps={{
+                      style: {
+                        height: '30px',
+                        width: '250px',
+                        padding: '0 14px',
+                      },
+                    }} value={product.currentRetailPurchasingPrice} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, currentRetailPurchasingPrice: parseFloat(event.target.value) }))} />
+
+                </DemoItem>
+              </Box>
+            </Grid>
+            <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+              <Box sx={{ mx: '6px', my: '5px' }}>
+                <DemoItem sx={{ padding: '0px' }} label="Current retail selling price">
+                  <TextField
+                    required
+                    id="outlined-basic"
+                    // label="Name"
+                    variant="outlined"
+                    size="small" style={{}}
+
+                    InputLabelProps={{
+                      style: {
+                        height: '30px',
+                        fontSize: '10px',
+                      },
+                    }}
+
+                    inputProps={{
+                      style: {
+                        height: '30px',
+                        width: '250px',
+                        padding: '0 14px',
+                      },
+                    }} value={product.barCode} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, barCode: parseFloat(event.target.value) }))} />
+
+                </DemoItem>
+              </Box>
+            </Grid>
+          </Grid>
+
+          <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+            <Box sx={{ mx: '6px', my: '5px' }}>
+              <DemoItem sx={{ padding: '0px' }} label="Description">
+                <textarea
+                  required
+                  id="outlined-basic"
+
+                  // label="Name"
+                  // variant="outlined"
+                  // size="small" 
+                  style={{ height: '130px', width: '300px', border: 'solid #adadad 1px', borderRadius: '3px' }}
+
+                  // InputLabelProps={{
+                  //   style: {
+                  //     height: '120px',
+                  //     fontSize: '10px',
+                  //   },
+                  // }}
+
+                  // inputProps={{
+                  //   style: {
+                  //     height: '120px',
+                  //     width: '280px',
+                  //     padding: '0 14px',
+                  //   },
+                  // }} 
+                  value={product.description} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, description: event.target.value }))} />
+
+              </DemoItem>
+            </Box>
+          </Grid>
+        </Grid>
+
       </Grid>
 
-
-      <Grid item xs={12} sm={6} md={6} ml='0px'
-        display='flex' justifyContent='center' flexDirection='column' alignItems='center' height='auto'>
-        <Box sx={{ fontSize: { xs: '7pt', sm: '8pt', md: '9pt' }, fontWeight: '600', width: '100%', backgroundColor: '#f7f7f7', mt: '15px' }}
-          display="flex" flexDirection="column" justifyContent="start" alignItems="start" width="100%" py='12px' px='12px'>
-          Price
-        </Box>
-        <Box display='flex' justifyContent='space-around' flexDirection='row' alignItems='center' sx={{ mx: '6px', my: '0px', backgroundColor: 'white', width: '100%' }}>
-          <Box sx={{ mx: '6px', my: '20px' }}>
-            <Stack>
-              <label style={labelStyle}>currentWholeSalePurchasingPrice</label>
-              <input type="text" style={textFieldStyle} value={productName} />
-            </Stack>
-          </Box>
-
-          {/* </Box> */}
-          <Box sx={{ mx: '6px', my: '20px' }}>
-            <Stack>
-              <label style={labelStyle}>currentWholeSalSellingPrice</label>
-              <input type="text" style={textFieldStyle} value={productName} />
-            </Stack>
-          </Box>
-          <Box sx={{ mx: '6px', my: '20px' }}>
-            <Stack>
-              <label style={labelStyle}>currentRetailPurchasingPrice</label>
-              <input type="text" style={textFieldStyle} value={productName} />
-            </Stack>
-          </Box>
-        </Box>
-      </Grid>
-
-
-
-      <Grid item xs={12} sm={6} md={6} ml='0px'
-        display='flex' justifyContent='center' flexDirection='column' alignItems='center' height='auto'>
-        <Box sx={{ fontSize: { xs: '7pt', sm: '8pt', md: '9pt' }, fontWeight: '600', width: '100%', backgroundColor: '#f7f7f7', mt: '15px' }}
-          display="flex" flexDirection="column" justifyContent="start" alignItems="start" width="100%" py='12px' px='12px'>
+      <Grid item xs={12} sm={6} md={3} ml='0px' direction='column'>
+        <Box sx={{ fontSize: { sm: '9pt', md: '10pt' }, fontWeight: '600', backgroundColor: '#f7f7f7', mt: '15px' }}
+          display="flex" flexDirection="column" justifyContent="start" alignItems="start" py='12px' px='12px'>
           Select
         </Box>
-        <Box display='flex' justifyContent='space-around' flexDirection='row' alignItems='center' sx={{ mx: '6px', my: '0px', backgroundColor: 'white', width: '100%' }}>
-          <Box sx={{ mb: '20px', display: 'flex' }}>
-            {/* <Stack> */}
-            {/* <label style={labelStyle}>Supplier</label> */}
-            <FormControl sx={{ minWidth: 250, height: '0px', borderRadius: '2px' }} size="small">
-              <InputLabel sx={{ fontSize: '14px' }} id="demo-select-small-label">Supplier</InputLabel>
-              <Select
-                labelId="demo-select-small-label"
-                id="demo-select-small"
-                value={age}
-                label="Age"
-                onChange={handleChange}
+        <Grid item container direction='row' xs={12} spacing={1} pb={2} justifyContent='center' sx={{ backgroundColor: 'white' }}>
+          <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+            <Box sx={{ mx: '6px', my: '20px', display: 'flex' }}>
+
+              <FormControl sx={{ minWidth: 250, height: '30px' }} size="small">
+
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  options={suppliers}
+                  sx={{
+                    width: 'auto',
+                    height: '30px', // Adjust the height here
+                    "& .MuiOutlinedInput-root": {
+                      paddingY: "0px!important",
+                      marginY: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                    },
+                  }}
+                  renderInput={(params) => <TextField {...params} label="Supplier" />}
+                />
+
+              </FormControl>
+              <Button fullWidth variant="contained" color="primary" size='small'
+                sx={{
+                  minWidth: '25px',
+                  backgroundColor: 'primary.main',
+                  fontSize: { xs: '7pt', sm: '8pt', md: '9pt' },
+                  borderRadius: '0px',
+                  textTransform: 'inherit',
+                  height: '28px',
+                  ml: '8px',
+                  fontWeight: '600',
+                  mt: '11.5px',
+                  ":hover": { // Styles applied on hover
+                    outlineColor: 'primary.main', // Corrected property nam
+                    backgroundColor: theme.palette.action.hover, // Change background color on hover
+                    // color: 'primary.main' // Change text color on hover
+                  }
+                }}
+              // onClick={() => (navigate('addProduct', { replace: false }))}
+
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
-            <Button fullWidth variant="contained" color="primary" size='small'
-              sx={{
-                minWidth: '25px',
-                backgroundColor: 'primary.main',
-                fontSize: { xs: '7pt', sm: '8pt', md: '9pt' },
-                borderRadius: '1px',
-                textTransform: 'inherit',
-                height: '28px',
-                ml: '8px',
-                fontWeight: '600',
-                ":hover": { // Styles applied on hover
-                  outlineColor: 'primary.main', // Corrected property nam
-                  backgroundColor: theme.palette.action.hover, // Change background color on hover
-                  // color: 'primary.main' // Change text color on hover
-                }
-              }}
-            // onClick={() => (navigate('addProduct', { replace: false }))}
+                <AddIcon sx={{ fontSize: { xs: '11pt', sm: '12pt', md: '14pt' }, }}></AddIcon>
 
-            >
-              <AddIcon sx={{ fontSize: { xs: '11pt', sm: '12pt', md: '14pt' }, }}></AddIcon>
+              </Button>
+            </Box>
+          </Grid>
 
-            </Button>          </Box>
-          <Box sx={{ mx: '6px', my: '20px', display: 'flex' }}>
+          <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+            <Box sx={{ mx: '6px', my: '20px', display: 'flex' }}>
 
-            <FormControl sx={{ minWidth: 250, height: '30px' }} size="small">
-              <InputLabel id="demo-select-small-label">Category</InputLabel>
-              <Select
-                labelId="demo-select-small-label"
-                id="demo-select-small"
-                value={age}
-                label="Age"
-                onChange={handleChange}
+              <FormControl sx={{ minWidth: 250, height: '30px' }} size="small">
+
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  options={categories}
+                  sx={{
+                    width: 'auto',
+                    height: '30px', // Adjust the height here
+                    "& .MuiOutlinedInput-root": {
+                      paddingY: "0px!important",
+                      marginY: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                    },
+                  }}
+                  renderInput={(params) => <TextField {...params} label="Category" />}
+                />
+
+              </FormControl>
+              <Button fullWidth variant="contained" color="primary" size='small'
+                sx={{
+                  minWidth: '25px',
+                  backgroundColor: 'primary.main',
+                  fontSize: { xs: '7pt', sm: '8pt', md: '9pt' },
+                  borderRadius: '0px',
+                  textTransform: 'inherit',
+                  height: '28px',
+                  ml: '8px',
+                  mt: '11.5px',
+                  fontWeight: '600',
+                  ":hover": { // Styles applied on hover
+                    outlineColor: 'primary.main', // Corrected property nam
+                    backgroundColor: theme.palette.action.hover, // Change background color on hover
+                    // color: 'primary.main' // Change text color on hover
+                  }
+                }}
+              // onClick={() => (navigate('addProduct', { replace: false }))}
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
-            <Button fullWidth variant="contained" color="primary" size='small'
-              sx={{
-                minWidth: '25px',
-                backgroundColor: 'primary.main',
-                fontSize: { xs: '7pt', sm: '8pt', md: '9pt' },
-                borderRadius: '1px',
-                textTransform: 'inherit',
-                height: '28px',
-                ml: '8px',
-                fontWeight: '600',
-                ":hover": { // Styles applied on hover
-                  outlineColor: 'primary.main', // Corrected property nam
-                  backgroundColor: theme.palette.action.hover, // Change background color on hover
-                  // color: 'primary.main' // Change text color on hover
-                }
-              }}
-            // onClick={() => (navigate('addProduct', { replace: false }))}
+                <AddIcon sx={{ fontSize: { xs: '11pt', sm: '12pt', md: '14pt' } }}></AddIcon>
+              </Button>
+            </Box>
+          </Grid>
+          <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+            <Box sx={{ mx: '6px', my: '20px', display: 'flex' }}>
+              <FormControl sx={{ minWidth: 250, height: '30px' }} size="small">
 
-            >
-              <AddIcon sx={{ fontSize: { xs: '11pt', sm: '12pt', md: '14pt' }, }}></AddIcon>
+                <Autocomplete
+                  disablePortal
+                  id="combo-box-demo"
+                  options={shelfs}
+                  sx={{
+                    width: 'auto',
+                    height: '30px', // Adjust the height here
+                    "& .MuiOutlinedInput-root": {
+                      paddingY: "0px!important",
+                      marginY: '8px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      textAlign: 'center',
+                    },
+                  }}
 
-            </Button>
-            {/* </Stack> */}
-          </Box>
-          <Box sx={{ mx: '6px', my: '20px', display: 'flex' }}>
-            {/* <Stack> */}
-            {/* <label style={labelStyle}>Supplier</label> */}
-            <FormControl sx={{ minWidth: 250, height: '30px' }} size="small">
-              <InputLabel id="demo-select-small-label">Shelf</InputLabel>
-              <Select
-                labelId="demo-select-small-label"
-                id="demo-select-small"
-                value={age}
-                label="Age"
-                onChange={handleChange}
+                  renderInput={(params) => <TextField label="Shelf" {...params} sx={{}} />}
+                />
+
+              </FormControl>
+              <Button fullWidth variant="contained" color="primary" size='small'
+                sx={{
+                  minWidth: '25px',
+                  backgroundColor: 'primary.main',
+                  fontSize: { xs: '7pt', sm: '8pt', md: '9pt' },
+                  borderRadius: '0px',
+                  textTransform: 'inherit',
+                  height: '28px',
+                  ml: '8px',
+                  fontWeight: '600',
+                  mt: '11.5px',
+                  ":hover": { // Styles applied on hover
+                    outlineColor: 'primary.main', // Corrected property nam
+                    backgroundColor: theme.palette.action.hover, // Change background color on hover
+                    // color: 'primary.main' // Change text color on hover
+                  }
+                }}
+              // onClick={() => (navigate('addProduct', { replace: false }))}
               >
-                <MenuItem value="">
-                  <em>None</em>
-                </MenuItem>
-                <MenuItem value={10}>Ten</MenuItem>
-                <MenuItem value={20}>Twenty</MenuItem>
-                <MenuItem value={30}>Thirty</MenuItem>
-              </Select>
-            </FormControl>
-            <Button fullWidth variant="contained" color="primary" size='small'
-              sx={{
-                minWidth: '25px',
-                backgroundColor: 'primary.main',
-                fontSize: { xs: '7pt', sm: '8pt', md: '9pt' },
-                borderRadius: '1px',
-                textTransform: 'inherit',
-                height: '28px',
-                ml: '8px',
-                fontWeight: '600',
-                ":hover": { // Styles applied on hover
-                  outlineColor: 'primary.main', // Corrected property nam
-                  backgroundColor: theme.palette.action.hover, // Change background color on hover
-                  // color: 'primary.main' // Change text color on hover
-                }
-              }}
-            // onClick={() => (navigate('addProduct', { replace: false }))}
+                <AddIcon sx={{ fontSize: { xs: '11pt', sm: '12pt', md: '14pt' }, }}></AddIcon>
 
-            >
-              <AddIcon sx={{ fontSize: { xs: '11pt', sm: '12pt', md: '14pt' }, }}></AddIcon>
+              </Button>
+            </Box>
+          </Grid>
+        </Grid>
+      </Grid>
 
-            </Button>
-          </Box>
+      <Grid item xs={12} sm={6} md={3} ml='0px' direction='column'>
+        <Box sx={{ fontSize: { sm: '9pt', md: '10pt' }, fontWeight: '600', backgroundColor: '#f7f7f7', mt: '15px' }}
+          display="flex" flexDirection="column" justifyContent="start" alignItems="start" py='12px' px='12px'>
+          Price and Quantity
         </Box>
+        <Grid item container direction='row' xs={12} spacing={1} pb={2} mb='60px' justifyContent='center' sx={{ backgroundColor: 'white' }}>
+          <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+            <Box sx={{ mx: '6px', my: '5px' }}>
+              <DemoItem sx={{ padding: '0px' }} label="Current whole sale selling price">
+                <TextField
+                  required
+                  id="outlined-basic"
+                  // label="Name"
+                  variant="outlined"
+                  size="small" style={{}}
+
+                  InputLabelProps={{
+                    style: {
+                      height: '30px',
+                      fontSize: '10px',
+                    },
+                  }}
+
+                  inputProps={{
+                    style: {
+                      height: '30px',
+                      width: '250px',
+                      padding: '0 14px',
+                    },
+                  }} value={product.currentWholeSalSellingPrice} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, currentRetailSellingPrice: parseFloat(event.target.value) }))} />
+
+              </DemoItem>
+            </Box>
+          </Grid>
+          <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+            <Box sx={{ mx: '6px', my: '5px' }}>
+
+
+              <DemoItem sx={{ padding: '0px' }} label="Current whole sale purchasing price">
+                <TextField
+                  required
+                  id="outlined-basic"
+                  // label="Name"
+                  variant="outlined"
+                  size="small" style={{}}
+
+                  InputLabelProps={{
+                    style: {
+                      height: '30px',
+                      fontSize: '10px',
+                    },
+                  }}
+
+                  inputProps={{
+                    style: {
+                      height: '30px',
+                      width: '250px',
+                      padding: '0 14px',
+                    },
+                  }} value={product.currentWholeSalePurchasingPrice} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, currentWholeSalePurchasingPrice: parseFloat(event.target.value) }))} />
+
+              </DemoItem>
+            </Box>
+          </Grid>
+
+          <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+            <Box sx={{ mx: '6px', my: '5px' }}>
+              <DemoItem sx={{ padding: '0px' }} label="Quantity of products presented for retail">
+                <TextField
+                  required
+                  id="outlined-basic"
+                  // label="Name"
+                  variant="outlined"
+                  size="small" style={{}}
+
+                  InputLabelProps={{
+                    style: {
+                      height: '30px',
+                      fontSize: '10px',
+                    },
+                  }}
+
+                  inputProps={{
+                    style: {
+                      height: '30px',
+                      width: '250px',
+                      padding: '0 14px',
+                    },
+                  }} value={product.quantityOfProductsPresentedForRetail} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, quantityOfProductsPresentedForRetail: parseFloat(event.target.value) }))} />
+
+              </DemoItem>
+            </Box>
+          </Grid>
+          <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+            <Box sx={{ mx: '6px', my: '5px' }}>
+              <DemoItem sx={{ padding: '0px' }} label="Quantity of products - whole sale">
+                <TextField
+                  required
+                  id="outlined-basic"
+                  // label="Name"
+                  variant="outlined"
+                  size="small" style={{}}
+
+                  InputLabelProps={{
+                    style: {
+                      height: '30px',
+                      fontSize: '10px',
+                    },
+                  }}
+
+                  inputProps={{
+                    style: {
+                      height: '30px',
+                      width: '250px',
+                      padding: '0 14px',
+                    },
+                  }} value={product.quantityOfProductsPresentedForWholesale} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, quantityOfProductsPresentedForWholesale: parseFloat(event.target.value) }))} />
+
+              </DemoItem>
+            </Box>
+          </Grid>
+          <Grid item display="flex" flexDirection="column" justifyContent="start" alignItems="center" xs={12} sm={6} md={4}>
+            <Box sx={{ mr: '6px', my: '5px' }}>
+              <DemoItem sx={{ padding: '0px' }} label="Minimum quantity of products - retail">
+                <TextField
+                  required
+                  id="outlined-basic"
+                  // label="Name"
+                  variant="outlined"
+                  size="small" style={{}}
+
+                  InputLabelProps={{
+                    style: {
+                      height: '30px',
+                      fontSize: '10px',
+                    },
+                  }}
+
+                  inputProps={{
+                    style: {
+                      height: '30px',
+                      width: '250px',
+                      padding: '0 14px',
+                    },
+                  }} value={product.minimumQuantityOfProductsPresentedForRetail} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, minimumQuantityOfProductsPresentedForRetail: parseFloat(event.target.value) }))} />
+
+              </DemoItem>
+            </Box>
+          </Grid>
+          <Grid item display="flex" flexDirection="column" justifyContent="center" alignItems="center" xs={12} sm={6} md={4}>
+            <Box sx={{ mr: '6px', my: '5px' }}>
+              <DemoItem sx={{ padding: '0px' }} label="Minimum quantity of products - whole sale">
+                <TextField
+                  required
+                  id="outlined-basic"
+                  // label="Name"
+                  variant="outlined"
+                  size="small" style={{}}
+
+                  InputLabelProps={{
+                    style: {
+                      height: '30px',
+                      fontSize: '10px',
+                    },
+                  }}
+
+                  inputProps={{
+                    style: {
+                      height: '30px',
+                      width: '250px',
+                      padding: '0 14px',
+                    },
+                  }} value={product.minimumQuantityOfProductsPresentedForWholesale} onChange={(event) => setProduct(prevProduct => ({ ...prevProduct, minimumQuantityOfProductsPresentedForWholesale: parseFloat(event.target.value) }))} />
+
+              </DemoItem>
+            </Box>
+          </Grid>
+        </Grid>
       </Grid>
 
 
+    </Grid>
 
 
-      <Box sx={{ mx: '6px', my: '20px' }}>
-        <Stack>
-          <label style={labelStyle}>currentRetailSellingPrice</label>
-          <input type="text" style={textFieldStyle} value={productName} />
-        </Stack>
-      </Box>
-
-      <Grid item xs={12} sm={6} md={3}
-        display='flex' justifyContent='start' flexDirection='column' alignItems='start' height='auto'>
-
-
-        <Box sx={{ mx: '6px', my: '20px' }}>
-          <Stack>
-            <label style={labelStyle}>quantityOfProductsPresentedForRetail</label>
-            <input type="text" style={textFieldStyle} value={productName} />
-          </Stack>
-
-        </Box>
-        <Box sx={{ mx: '6px', my: '20px' }}>
-          <Stack>
-            <label style={labelStyle}>quantityOfProductsPresentedForWholesale</label>
-            <input type="text" style={textFieldStyle} value={productName} />
-          </Stack>
-
-
-        </Box>
-        <Box sx={{ mx: '6px', my: '20px' }}>
-          <Stack>
-            <label style={labelStyle}>minimumQuantityOfProductsPresentedForRetail</label>
-            <input type="text" style={textFieldStyle} value={productName} />
-          </Stack>
-
-        </Box>
-        <Box sx={{ mx: '6px', my: '20px' }}>
-          <Stack>
-            <label style={labelStyle}>minimumQuantityOfProductsPresentedForWholesale</label>
-            <input type="text" style={textFieldStyle} value={productName} />
-          </Stack>
-
-
-        </Box>
-      </Grid>
-    </Grid >
 
 
   );

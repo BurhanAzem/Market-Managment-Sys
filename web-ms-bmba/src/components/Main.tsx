@@ -15,6 +15,7 @@ export const Main: FC<MainProps> = ({ children }): ReactElement => {
           // flexDirection: "column",
           justifyContent: "flex-start",
           overflowY: "auto",
+          overflowX: "auto",
           minHeight: "100vh",
           maxWidth: "100vw",
           flexGrow: 1,
