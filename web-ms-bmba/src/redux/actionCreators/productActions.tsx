@@ -116,36 +116,47 @@ export const addProduct = (product: IProduct): ThunkAction<Promise<void>, RootSt
 //     }
 // }
 
-// export const editProduct = (editedCompany: IProduct): ThunkResult<void> => async (dispatch: Dispatch<Action>) => { 
-//     dispatch<IEditProduct>({ type: ActionType.EDIT_PRODUCT });
-//     try {
-//         const response: AxiosResponse<Company> = await axios.patch(`/companies/${editedCompany.id}`, editedCompany);
-//         dispatch<IEditProductSuccess>({ 
-//             type: ActionType.EDIT_PRODUCT_SUCCESS, 
-//             payload: response.data
-//         });
-//     } catch (err: any) {
-//         dispatch<IEditProductFail>({ 
-//             type: ActionType.EDIT_PRODUCT_FAIL,
-//             payload: err
-//         });
-//     }
-// };
-// export const deleteProduct = (deletedId: number): ThunkResult<void> => async (dispatch: Dispatch<Action>) => { 
-//     dispatch<IDeleteProduct>({ type: ActionType.DELETE_PRODUCT });
-//     try {
-//         const response: AxiosResponse<number> = await axios.delete(`/companies/${deletedId}`);
-//         dispatch<IDeleteProductSuccess>({
-//             type: ActionType.DELETE_PRODUCT_SUCCESS,
-//             payload: response.data
-//         });
-//         history.push('/');
-//     } catch (err: any) {
-//         dispatch<IDeleteProductFail>({ 
-//             type: ActionType.DELETE_PRODUCT_FAIL,
-//             payload: err
-//         });
-//     }
-// };
+export const editDiscount = (product: IProduct): ThunkAction<Promise<void>, RootState, unknown, AnyAction> =>
+    async (
+      dispatch: ThunkDispatch<RootState, unknown, AnyAction>
+    ): Promise<void> => { 
+    dispatch<IEditProduct>({ 
+        type: ActionType.EDIT_PRODUCT
+    });
+    try {
+        const response: AxiosResponse<IProduct> = await axios.put(`/products`, product);
+        dispatch<IEditProductSuccess>({
+            type: ActionType.EDIT_PRODUCT_SUCCESS,
+            payload: response.data  
+        });
+
+    } catch(err:any) {
+        dispatch<IEditProductFail>({
+            type: ActionType.EDIT_PRODUCT_FAIL,
+            payload: err
+        });
+    }
+};
 
 
+export const deleteDiscount = (productId: number): ThunkAction<Promise<void>, RootState, unknown, AnyAction> =>
+    async (
+      dispatch: ThunkDispatch<RootState, unknown, AnyAction>
+    ): Promise<void> => { 
+    dispatch<IDeleteProduct>({ 
+        type: ActionType.DELETE_PRODUCT
+    });
+    try {
+        const response: AxiosResponse = await axios.delete(`/discounts/${productId}`); 
+        dispatch<IDeleteProductSuccess>({
+            type: ActionType.DELETE_PRODUCT_SUCCESS,
+            payload: response.data  
+        });
+
+    } catch(err:any) {
+        dispatch<IDeleteProductFail>({
+            type: ActionType.DELETE_PRODUCT_FAIL,
+            payload: err
+        });
+    }
+};

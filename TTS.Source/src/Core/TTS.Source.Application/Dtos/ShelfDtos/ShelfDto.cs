@@ -3,9 +3,9 @@ using TTS.Source.Domain.Base;
 
 namespace TTS.Source.Application.Dtos
 {
-    public class ShelfDto 
+    public class ShelfDto : BaseShelfDto
     {
-        public string ShelfCode { get; set; }
+        public Guid Id { get; set; }
 
     }
 }

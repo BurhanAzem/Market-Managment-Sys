@@ -2,6 +2,6 @@
 
 namespace TTS.Source.Application.Features.Identity.Models
 {
-    public record AddProductRequest(ProductDto ProductDto);
+    public record AddProductRequest(AddProductDto ProductDto);
 
 }

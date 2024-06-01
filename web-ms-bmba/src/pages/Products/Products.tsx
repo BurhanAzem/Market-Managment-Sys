@@ -13,7 +13,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from '@mui/icons-material/Search';
 import { useTheme } from "@mui/material";
-import SearchBar from "../../components/SearchBar";
+// import SearchBar from "../../components/SearchBar";
 import { RootState } from "../../redux/store/store";
 import { RootActions } from "../../redux/actionCreators/actionResultTypes";
 import { ThunkDispatch } from "redux-thunk";
@@ -24,6 +24,7 @@ import { IProductsRes } from "../../models/productRes";
 import ReplayIcon from '@mui/icons-material/Replay';
 import { Check, Settings } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import SearchBar from "../../components/Searchbar";
 function createData(
   name: string,
   calories: number,

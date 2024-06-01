@@ -14,7 +14,7 @@ export interface IProduct {
     categoryId?: number
     name: string
     description?: string
-    imagePath?: string
+    images?: File[]
     barCode: number
     currentWholeSalePurchasingPrice?: number
     currentWholeSalSellingPrice?: number

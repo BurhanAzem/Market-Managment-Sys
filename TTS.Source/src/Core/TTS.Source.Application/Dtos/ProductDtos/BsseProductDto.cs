@@ -6,12 +6,12 @@ using TTS.Source.Domain.Shared;
 
 namespace TTS.Source.Application.Dtos
 {
-    public class ProductDto 
+    public class BaseProductDto 
     {
         public Guid? SupplierId { get; set; }
+        public Guid? CategoryId { get; set; }
+        public Guid? ShelfId { get; set; }
         public DiscountDto? DiscountDto { get; set; }
-        public CategoryDto? CategoryDto { get; set; }
-        public ShelfDto? ShelfDto { get; set; }
         public string Name { get; set; }
         public string? Description { get; set; }
         public string? ImagePath { get; set; }

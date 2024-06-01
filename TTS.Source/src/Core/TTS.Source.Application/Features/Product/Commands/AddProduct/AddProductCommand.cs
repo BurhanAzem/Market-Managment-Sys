@@ -4,6 +4,6 @@ using TTS.Source.Application.Dtos;
 
 namespace TTS.Source.Application.Features.Identity.Models
 {
-    public record AddProductCommand(ProductDto ProductDto) : IRequest<BaseCommandResponse>;
+    public record AddProductCommand(AddProductDto ProductDto) : IRequest<BaseCommandResponse>;
 
 }

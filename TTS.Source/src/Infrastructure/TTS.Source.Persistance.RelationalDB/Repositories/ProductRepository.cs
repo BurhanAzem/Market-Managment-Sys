@@ -16,7 +16,7 @@ namespace TTS.Source.Persistance.RelationalDB.Repositories
             _dbContext = dbContext;
         }
 
-        public async Task<Guid> CreateProduct(ProductDto productDto, CancellationToken cancellationToken)
+        public async Task<Guid> CreateProduct(AddProductDto productDto, CancellationToken cancellationToken)
         {
             // Check if the product already exists
             var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(p => p.BarCode == productDto.BarCode, cancellationToken);
@@ -26,45 +26,47 @@ namespace TTS.Source.Persistance.RelationalDB.Repositories
             }
 
             // Check if the category exists or create a new one
-            var category = await _dbContext.Categories.FirstOrDefaultAsync(p => p.Name == productDto.CategoryDto.Name, cancellationToken);
-            if (category == null)
-            {
-                category = new Category
-                {
-                    Name = productDto.CategoryDto.Name,
-                    Description = productDto.CategoryDto.Description
-                };
-                _dbContext.Categories.Add(category);
-                await _dbContext.SaveChangesAsync(cancellationToken);
-            }
-
+            // var category = await _dbContext.Categories.FirstOrDefaultAsync(p => p.Name == productDto.CategoryDto.Name, cancellationToken);
+            // if (category == null)
+            // {
+            //     category = new Category
+            //     {
+            //         Name = productDto.CategoryDto.Name,
+            //         Description = productDto.CategoryDto.Description
+            //     };
+            //     _dbContext.Categories.Add(category);
+            //     await _dbContext.SaveChangesAsync(cancellationToken);
+            // }
+            Discount discount = new Discount();
             // Create a new discount
-            var discount = new Discount
+            if (productDto.DiscountDto != null)
             {
-                Amount = productDto.DiscountDto.Amount,
-                StartDate = productDto.DiscountDto.StartDate,
-                EndDate = productDto.DiscountDto.EndDate
-            };
-            _dbContext.Discounts.Add(discount);
-            await _dbContext.SaveChangesAsync(cancellationToken);
-
-            // Check if the shelf exists or create a new one
-            var shelf = await _dbContext.Shelfs.FirstOrDefaultAsync(p => p.ShelfCode == productDto.ShelfDto.ShelfCode, cancellationToken);
-            if (shelf == null)
-            {
-                shelf = new Shelf
-                {
-                    ShelfCode = productDto.ShelfDto.ShelfCode
-                };
-                _dbContext.Shelfs.Add(shelf);
+                discount.Amount = productDto.DiscountDto.Amount;
+                discount.StartDate = productDto.DiscountDto.StartDate;
+                discount.EndDate = productDto.DiscountDto.EndDate;
+                _dbContext.Discounts.Add(discount);
                 await _dbContext.SaveChangesAsync(cancellationToken);
             }
+
+
+            // // Check if the shelf exists or create a new one
+            // var shelf = await _dbContext.Shelfs.FirstOrDefaultAsync(p => p.ShelfCode == productDto.ShelfDto.ShelfCode, cancellationToken);
+            // if (shelf == null)
+            // {
+            //     shelf = new Shelf
+            //     {
+            //         ShelfCode = productDto.ShelfDto.ShelfCode
+            //     };
+            //     _dbContext.Shelfs.Add(shelf);
+            //     await _dbContext.SaveChangesAsync(cancellationToken);
+            // }
 
             // Create the new product
             var product = new Product
             {
                 BarCode = productDto.BarCode,
-                Category = category,
+                CategoryId = productDto.CategoryId,
+                ShelfId = productDto.ShelfId,
                 CreatedDate = DateTime.Now,
                 CurrentRetailPurchasingPrice = productDto.CurrentRetailPurchasingPrice,
                 CurrentRetailSellingPrice = productDto.CurrentRetailSellingPrice,
@@ -78,7 +80,6 @@ namespace TTS.Source.Persistance.RelationalDB.Repositories
                 MinimumQuantityOfProductsPresentedForWholesale = productDto.MinimumQuantityOfProductsPresentedForWholesale,
                 QuantityOfProductsPresentedForRetail = productDto.QuantityOfProductsPresentedForRetail,
                 QuantityOfProductsPresentedForWholesale = productDto.QuantityOfProductsPresentedForWholesale,
-                Shelf = shelf,
                 SupplierId = productDto.SupplierId
             };
 
@@ -125,14 +126,43 @@ namespace TTS.Source.Persistance.RelationalDB.Repositories
             return product;
         }
 
-        public async Task UpdateProduct(Product product, CancellationToken cancellationToken)
+        public async Task UpdateProduct(UpdateProductDto productDto, Guid productId, CancellationToken cancellationToken)
         {
-            var prod = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == product.Id, cancellationToken);
-            if (prod == null)
+            var product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Id == productId, cancellationToken);
+            if (product == null)
             {
-                throw new BadRequestException("product not exist !");
+                throw new BadRequestException("This product not exists!");
             }
-            _dbContext.Products.Update(prod);
+
+
+
+
+            product.BarCode = (double)(productDto.BarCode != null ? productDto.BarCode : product.BarCode);
+
+            product.CategoryId = productDto.CategoryId != null ? productDto.CategoryId : product.CategoryId;
+            product.ShelfId = productDto.ShelfId != null ? productDto.ShelfId : product.ShelfId;
+            product.SupplierId = productDto.SupplierId != null ? productDto.SupplierId : product.SupplierId;
+            // product.CreatedDate = DateTime.Now,
+            product.CurrentRetailPurchasingPrice = productDto.CurrentRetailPurchasingPrice != null ? productDto.CurrentRetailPurchasingPrice : product.CurrentRetailPurchasingPrice;
+            product.CurrentRetailSellingPrice = (decimal)(productDto.CurrentRetailSellingPrice != null ? productDto.CurrentRetailSellingPrice : product.CurrentRetailSellingPrice);
+            product.CurrentWholeSalePurchasingPrice = productDto.CurrentWholeSalePurchasingPrice != null ? productDto.CurrentWholeSalePurchasingPrice : product.CurrentWholeSalePurchasingPrice;
+            product.Description = productDto.Description != null ? productDto.Description : product.Description;
+            product.CurrentWholeSalSellingPrice = productDto.CurrentWholeSalSellingPrice != null ? productDto.CurrentWholeSalSellingPrice : product.CurrentWholeSalSellingPrice;
+            product.Discount = productDto.DiscountDto != null ? new Discount
+            {
+                Amount = productDto.DiscountDto.Amount,
+                StartDate = productDto.DiscountDto.StartDate,
+                EndDate = productDto.DiscountDto.EndDate
+            } : product.Discount;
+
+            product.ImagePath = productDto.ImagePath != null ? productDto.ImagePath : product.ImagePath;
+            product.Name = productDto.Name != null ? productDto.Name : product.Name;
+            product.MinimumQuantityOfProductsPresentedForRetail = (int)(productDto.MinimumQuantityOfProductsPresentedForRetail != null ? productDto.MinimumQuantityOfProductsPresentedForRetail : product.MinimumQuantityOfProductsPresentedForRetail);
+            product.MinimumQuantityOfProductsPresentedForWholesale = productDto.MinimumQuantityOfProductsPresentedForWholesale != null ? productDto.MinimumQuantityOfProductsPresentedForWholesale : product.MinimumQuantityOfProductsPresentedForWholesale;
+            product.QuantityOfProductsPresentedForRetail = (int)(productDto.QuantityOfProductsPresentedForRetail != null ? productDto.QuantityOfProductsPresentedForRetail : product.QuantityOfProductsPresentedForRetail);
+            product.QuantityOfProductsPresentedForWholesale = productDto.QuantityOfProductsPresentedForWholesale != null ? productDto.QuantityOfProductsPresentedForWholesale : product.QuantityOfProductsPresentedForWholesale;
+
+            _dbContext.Products.Update(product);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }

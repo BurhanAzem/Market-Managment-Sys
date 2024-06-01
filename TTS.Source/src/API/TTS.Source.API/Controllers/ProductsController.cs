@@ -37,6 +37,31 @@ namespace TTS.Source.API.Features
             return Ok(res);
         }
 
+        [HttpDelete("/{productId}")]
+        // [Route(nameof(Register))]
+        [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> DeleteProduct([FromRoute] Guid productId, CancellationToken cancellationToken)
+        {
+            var command = new DeleteProductCommand(productId);
+            var res = await _mediator.Send(command, cancellationToken);
+            return Ok(res);
+        }
+
+
+        [HttpPut("{productId}")]
+        [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> UpdateProduct(
+       [FromBody] UpdateProductRequest request,
+       [FromRoute] Guid productId,
+       CancellationToken cancellationToken)
+        {
+            var command = new UpdateProductCommand(request.ProductDto, productId);
+            var res = await _mediator.Send(command, cancellationToken);
+            return Ok(res);
+        }
+
         [HttpGet()]
         [ProducesResponseType(typeof(GetProductsResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

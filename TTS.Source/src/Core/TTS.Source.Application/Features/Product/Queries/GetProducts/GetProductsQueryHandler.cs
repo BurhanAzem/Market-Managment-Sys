@@ -42,35 +42,38 @@ namespace TTS.Source.Application.Features.Projects.Queries
     p => p.Shelf
 );
 
-var productsDtos = paginatedProducts.Items
-    .Select(p => new ProductDto
-    {
-        SupplierId = p.SupplierId,
-        DiscountDto = p.Discount?.Adapt<DiscountDto>(), // Assuming Adapt method is used for mapping
-        CategoryDto = p.Category?.Adapt<CategoryDto>(), // Assuming Adapt method is used for mapping
-        ShelfDto = p.Shelf?.Adapt<ShelfDto>(), // Assuming Adapt method is used for mapping
-        Name = p.Name,
-        Description = p.Description,
-        ImagePath = p.ImagePath,
-        BarCode = p.BarCode,
-        CurrentWholeSalePurchasingPrice = p.CurrentWholeSalePurchasingPrice,
-        CurrentWholeSalSellingPrice = p.CurrentWholeSalSellingPrice,
-        CurrentRetailPurchasingPrice = p.CurrentRetailPurchasingPrice,
-        CurrentRetailSellingPrice = p.CurrentRetailSellingPrice,
-        QuantityOfProductsPresentedForRetail = p.QuantityOfProductsPresentedForRetail,
-        QuantityOfProductsPresentedForWholesale = p.QuantityOfProductsPresentedForWholesale,
-        MinimumQuantityOfProductsPresentedForRetail = p.MinimumQuantityOfProductsPresentedForRetail,
-        MinimumQuantityOfProductsPresentedForWholesale = p.MinimumQuantityOfProductsPresentedForWholesale
-    })
-    .ToList();
+            var productsDtos = paginatedProducts.Items
+                .Select(p => new ProductDto
+                {
+                    Id = p.Id,
+                    CategoryId = p.CategoryId,
+                    ShelfId = p.ShelfId,
+                    SupplierId = p.SupplierId,
+                    DiscountDto = p.Discount?.Adapt<DiscountDto>(), // Assuming Adapt method is used for mapping
+                    CategoryDto = p.Category?.Adapt<CategoryDto>(), // Assuming Adapt method is used for mapping
+                    ShelfDto = p.Shelf?.Adapt<ShelfDto>(), // Assuming Adapt method is used for mapping
+                    Name = p.Name,
+                    Description = p.Description,
+                    ImagePath = p.ImagePath,
+                    BarCode = p.BarCode,
+                    CurrentWholeSalePurchasingPrice = p.CurrentWholeSalePurchasingPrice,
+                    CurrentWholeSalSellingPrice = p.CurrentWholeSalSellingPrice,
+                    CurrentRetailPurchasingPrice = p.CurrentRetailPurchasingPrice,
+                    CurrentRetailSellingPrice = p.CurrentRetailSellingPrice,
+                    QuantityOfProductsPresentedForRetail = p.QuantityOfProductsPresentedForRetail,
+                    QuantityOfProductsPresentedForWholesale = p.QuantityOfProductsPresentedForWholesale,
+                    MinimumQuantityOfProductsPresentedForRetail = p.MinimumQuantityOfProductsPresentedForRetail,
+                    MinimumQuantityOfProductsPresentedForWholesale = p.MinimumQuantityOfProductsPresentedForWholesale
+                })
+                .ToList();
 
-var getProductsResponse = new GetProductsResponse(
-    productsDtos,
-    paginatedProducts.PageNumber,
-    paginatedProducts.TotalPages
-);
+            var getProductsResponse = new GetProductsResponse(
+                productsDtos,
+                paginatedProducts.PageNumber,
+                paginatedProducts.TotalPages
+            );
 
-return getProductsResponse;
+            return getProductsResponse;
 
         }
 
