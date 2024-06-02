@@ -9,39 +9,43 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DemoItem } from "@mui/x-date-pickers/internals/demo";
 import dayjs from "dayjs";
 import PropTypes from "prop-types";
-import { FC, ReactElement, forwardRef, useEffect, useState } from "react";
+import React, { FC, ReactElement, forwardRef, useEffect, useState } from "react";
 import { RootActions } from "../redux/actionCreators/actionResultTypes";
-import { RootState } from "../redux/store/store";
+import { AppDispatch, RootState } from "../redux/store/store";
 import { ThunkDispatch } from "redux-thunk";
 import { useDispatch, useSelector } from "react-redux";
+import { ActionType, ICloseAddDiscountModal } from "../redux/actionTypes/discountActionTypes";
+import { IDiscount } from "../models/discount";
+import { addDiscount } from "../redux/actionCreators/discountActions";
 
 
 const today = dayjs();
 const yesterday = dayjs().subtract(1, "day");
 
-export default function AddDiscountModal() {
+export default function AddDiscountModal({
+  productDiscountDto,
+  discountId
+}: {
+  productDiscountDto?: IDiscount;
+  discountId?: number;
+}) {
 
-  const dispatch: ThunkDispatch<RootState, void, RootActions> = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
+
   const isAddDiscountModalOpen: boolean = useSelector(
     (state: RootState) => state.discount.isAddDiscountModalOpen);
 
-  const [newTicketForm, setNewTicketForm] = useState({
-    projectId: '',
-    assigneeId: "",
-    name: "",
-    description: "",
-    startDate: "",
-    dueDate: "",
-    ticketPriority: "",
-    ticketStatus: "",
+  const isLoading: boolean | null = useSelector(
+    (state: RootState) => state.discount.loading);
+
+  const [discount, setDiscount] = React.useState<IDiscount>({
+    amount: 0.0,
+    endDate: dayjs().toDate(),
+    startDate: dayjs().subtract(1, 'day').toDate(),
   });
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [selectedAssignee, setSelectedAssignee] = useState({});
-  const [members, setMembers] = useState([]);
-
-  useEffect(() => {
-  }, []);
+  const handleCloseModal = () => {
+    dispatch<ICloseAddDiscountModal>({ type: ActionType.CLOSE_ADD_DISCOUNT_MODAL });
+  };
 
 
   return (
@@ -50,9 +54,8 @@ export default function AddDiscountModal() {
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={isAddDiscountModalOpen}
-        // onClose={handleClose}
+        // onClose={handleCloseModal}
         closeAfterTransition
-      // slots={{ backdrop: StyledBackdrop }}
       >
 
 
@@ -60,99 +63,73 @@ export default function AddDiscountModal() {
           <ModalContent sx={style}>
             <MUI.Stack py={0} direction="row" justifyContent="space-between">
               <MUI.Typography variant="h6" id="transition-modal-title">
-                Create a new project
+                Add Discount
               </MUI.Typography>
-              <MUI.Button sx={{ color: "#000" }} >
+              <MUI.Button onClick={handleCloseModal} sx={{ color: "#000" }} >
                 <CloseIcon />
               </MUI.Button>
             </MUI.Stack>
             <MUI.Divider />
-            <form>
-              <MUI.Stack gap={2}>
-                <MUI.TextField
-                  required
-                  id="outlined-basic"
-                  label="Name"
-                  variant="outlined"
-                  size="small"
-                // value={newProjectForm.name}
-                // onChange={(e) =>
-                //   setNewProjectForm({
-                //     ...newProjectForm,
-                //     name: e.target.value,
-                //   })
-                // }
-                />
-                <MUI.TextField
-                  required
-                  id="outlined-basic"
-                  label="Description"
-                  variant="outlined"
-                  // value={newProjectForm.description}
-                  // onChange={(e) =>
-                  //   setNewProjectForm({
-                  //     ...newProjectForm,
-                  //     description: e.target.value,
-                  //   })
-                  // }
-                  multiline
-                  rows={4}
-                />
-                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                  <MUI.Stack direction="row" gap={1}>
-                    <DemoItem label="Start Date">
-                      <DatePicker
-                        defaultValue={today}
-                        disablePast
-                        views={["year", "month", "day"]}
-                      // value={newProjectForm.startDate}
-                      // onChange={(e) =>
-                      //   setNewProjectForm({
-                      //     ...newProjectForm,
-                      //     startDate: `${e.$y}-${e.$M + 1}-${e.$D}`,
-                      //   })
-                      // }
-                      />
-                    </DemoItem>
-                    <DemoItem label="End Date">
-                      <DatePicker
-                        defaultValue={yesterday}
-                        disablePast
-                        views={["year", "month", "day"]}
-                      // value={newProjectForm.endDate}
-                      // onChange={(e) =>
-                      //   setNewProjectForm({
-                      //     ...newProjectForm,
-                      //     endDate: `${e.$y}-${e.$M + 1}-${e.$D}`,
-                      //   })
-                      // }
-                      />
-                    </DemoItem>
-                  </MUI.Stack>
-                </LocalizationProvider>
-                {/* <ProjectStatusMenuChoose
-                  ProjectForm={newProjectForm}
-                  handleStatusChange={handleStatusChange}
-                /> */}
-                <MUI.Stack width="100%" direction="row" gap={2}>
-                  <LoadingButton
-                    loading={isLoading}
-                    variant="contained"
-                    color="primary"
-                    type="submit"
-                  >
-                    Add
-                  </LoadingButton>
-                  <MUI.Button
-                    // onClick={handleClose}
-                    variant="outlined"
-                    color="error"
-                  >
-                    Cancel
-                  </MUI.Button>
+            <MUI.Stack gap={2}>
+              <MUI.TextField
+                required
+                id="outlined-basic"
+                label="Amount"
+                variant="outlined"
+                size="small"
+                value={discount.amount} onChange={(event: { target: { value: any; }; }) => setDiscount(prevDiscount => ({ ...prevDiscount, amount: event.target.value }))}
+              />
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <MUI.Stack direction="row" gap={1}>
+                  <DatePicker
+                    label="Start Date"
+                    disablePast
+                    views={['year', 'month', 'day']}
+                    value={dayjs(discount.startDate)}
+                    onChange={(newValue) => {
+                      if (newValue) {
+                        setDiscount((prevDiscount) => ({
+                          ...prevDiscount,
+                          startDate: newValue.toDate(),
+                        }));
+                      }
+                    }}
+                  />
+                  <DatePicker
+                    label="End Date"
+                    disablePast
+                    views={['year', 'month', 'day']}
+                    value={dayjs(discount.endDate)}
+                    onChange={(newValue) => {
+                      if (newValue) {
+                        setDiscount((prevDiscount) => ({
+                          ...prevDiscount,
+                          endDate: newValue.toDate(),
+                        }));
+                      }
+                    }}
+                  />
                 </MUI.Stack>
+              </LocalizationProvider>
+
+              <MUI.Stack width="100%" direction="row" gap={2}>
+                <LoadingButton
+                  loading={isLoading}
+                  variant="contained"
+                  color="primary"
+                  onClick={() => { productDiscountDto=discount; dispatch(addDiscount(discount)) }}
+                >
+                  Add
+                </LoadingButton>
+                <MUI.Button
+                  onClick={handleCloseModal}
+                  variant="outlined"
+                  color="error"
+                >
+                  Cancel
+                </MUI.Button>
               </MUI.Stack>
-            </form>
+            </MUI.Stack>
           </ModalContent>
         </MUI.Fade>
       </Modal>

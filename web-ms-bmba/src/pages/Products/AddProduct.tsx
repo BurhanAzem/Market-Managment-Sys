@@ -89,8 +89,8 @@ const AddProduct: FC = (): ReactElement => {
   const categories: ICategory[] | null = useSelector(
     (state: RootState) => state.category.categories);
 
-  const isAddDiscountModalOpen: boolean = useSelector(
-    (state: RootState) => state.discount.isAddDiscountModalOpen);
+    const isAddDiscountModalOpen = useSelector((state: RootState) => state.discount.isAddDiscountModalOpen);
+
 
 
   const isLoading: Boolean | null = useSelector(
@@ -153,9 +153,15 @@ const AddProduct: FC = (): ReactElement => {
       fileInput.click();
     }
   };
+
+
+  const handleOpenModal = () => {
+    dispatch<IOpenAddDiscountModal>({ type: ActionType.OPEN_ADD_DISCOUNT_MODAL });
+  };
+
   return (
     <>
-    { isAddDiscountModalOpen ? <AddDiscountModal></AddDiscountModal> : null}
+      {isAddDiscountModalOpen ? <AddDiscountModal  ></AddDiscountModal> : null}
       {
         isLoading ?
           <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }} width='100%' height='200px' >
@@ -678,9 +684,9 @@ const AddProduct: FC = (): ReactElement => {
                   display="flex" flexDirection="column" justifyContent="start" alignItems="start" >
                   Discount
                 </Box>
-                <Link style={{ color: '#16b', fontSize: '12px' }} onClick={ () => { dispatch<IOpenAddDiscountModal>({ type: ActionType.OPEN_ADD_DISCOUNT_MODAL }); console.log(isAddDiscountModalOpen);
-                 }} 
-                to={""}> {product.discountDto ? 'Update discount' : 'Add discount'} </Link>
+                <Link style={{ color: '#16b', fontSize: '12px' }} onClick={handleOpenModal}
+
+                  to={""}> {product.discountDto ? 'Update discount' : 'Add discount'} </Link>
               </Box>
               <Grid item container direction='row' xs={12} spacing={1} p={2} justifyContent='center' alignItems='center' sx={{ backgroundColor: 'white', fontSize: '12px' }}>
                 <span style={{ marginRight: '20px' }}>start at: {product.discountDto?.startDate ? product.discountDto?.startDate.toString() : '-'} </span>

@@ -100,7 +100,7 @@ namespace TTS.Source.Persistance.RelationalDB.Repositories
             }
             else
             {
-                throw new BadRequestException("product not exist !");
+                throw new BadRequestException("product not exist !!");
             }
         }
 

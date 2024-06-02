@@ -65,7 +65,9 @@ export const DiscountReducer: Reducer<IDiscountsState, Action> = (
         case ActionType.ADD_DISCOUNT_SUCCESS:
             return {
                 ...state,
-                loading: false
+                loading: false,
+                isAddDiscountModalOpen: false,
+
             };
 
         case ActionType.EDIT_DISCOUNT_SUCCESS:
@@ -84,30 +86,30 @@ export const DiscountReducer: Reducer<IDiscountsState, Action> = (
 
 
         case ActionType.OPEN_ADD_DISCOUNT_MODAL:
+            console.log('------------');
+            
             return {
                 ...state,
-                isAddProductModalOpen: true,
+                isAddDiscountModalOpen: true,
             };
 
         case ActionType.CLOSE_ADD_DISCOUNT_MODAL:
             return {
                 ...state,
-                isAddProductModalOpen: false,
+                isAddDiscountModalOpen: false,
             };
 
         case ActionType.OPEN_EDIT_DISCOUNT_MODAL:
             return {
                 ...state,
-                isEditProductModalOpen: true,
+                isEditDiscountModalOpen: true,
             };
 
         case ActionType.CLOSE_EDIT_DISCOUNT_MODAL:
             return {
                 ...state,
-                isEditProductModalOpen: false,
+                isEditDiscountModalOpen: false,
             };
-
-
 
         default:
             return state;

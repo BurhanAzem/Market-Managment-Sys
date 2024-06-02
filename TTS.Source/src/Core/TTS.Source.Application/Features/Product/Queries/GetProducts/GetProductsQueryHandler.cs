@@ -6,7 +6,6 @@ using TTS.Source.Application.Common.Contracts.Persistance;
 using TTS.Source.Application.Common.Models;
 using TTS.Source.Application.Dtos;
 using TTS.Source.Application.Features.Identity.Models;
-using TTS.Source.Application.Features.Projects.Models;
 using TTS.Source.Domain.Entities;
 using TTS.Source.Domain.Shared;
 

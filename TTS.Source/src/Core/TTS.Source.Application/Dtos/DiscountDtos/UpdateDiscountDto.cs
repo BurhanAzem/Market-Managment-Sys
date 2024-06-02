@@ -3,9 +3,8 @@ using TTS.Source.Domain.Base;
 
 namespace TTS.Source.Application.Dtos
 {
-    public class DiscountDto : BaseDiscountDto
+    public class UpdateDiscountDto : BaseDiscountDto
     {
-        public Guid Id { get; set; }
 
     }
 }

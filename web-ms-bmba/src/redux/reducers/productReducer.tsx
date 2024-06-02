@@ -5,11 +5,13 @@ import { Action, ActionType } from '../actionTypes/productActionTypes';
 import { ICompany as Company } from '../../models/company';
 import { IProduct } from '../../models/product';
 import { IProductsRes } from '../../models/productRes';
+import { IDiscount } from '../../models/discount';
 
 export interface IProductsState {
     products: IProduct[];
     pageNumber: number;
     totalPages: number;
+    discount: IDiscount | null;
     product: IProduct | null;
     loading: boolean;
     isAddProductModalOpen: boolean;
@@ -20,6 +22,7 @@ const initialState = {
     pageNumber: 1,
     totalPages: 1,
     products: [],
+    discount: null,
     product: null,
     loading: false,
     isAddProductModalOpen: false,

@@ -10,12 +10,9 @@ namespace TTS.Source.Application.Features.Identity.Commands.Login
     public class UserLoginCommandHandler : IRequestHandler<UserLoginCommand, UserResponseModel>
     {
         private readonly IUserIdentityService _userIdentity;
-        private readonly IMemberRepository _memberRepository;
-        public UserLoginCommandHandler(IUserIdentityService userIdentity,
-                                  IMemberRepository memberRepository)
+        public UserLoginCommandHandler(IUserIdentityService userIdentity)
         {
             _userIdentity = userIdentity;
-            _memberRepository = memberRepository;
         }
 
 

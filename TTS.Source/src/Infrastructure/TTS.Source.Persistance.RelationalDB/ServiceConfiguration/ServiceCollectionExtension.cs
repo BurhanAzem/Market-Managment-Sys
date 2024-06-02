@@ -62,16 +62,14 @@ namespace TTS.Source.Persistance.RelationalDB.ServiceConfiguration
             services.AddTransient<IUserIdentityService, UserIdentityService>();
 
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            services.AddScoped<IProjectRepository, ProjectRepository>();
-            services.AddScoped<ITicketRepository, TicketRepository>();
-            services.AddScoped<IMemberRepository, MemberRepository>();
-            services.AddScoped<IProjectMembershipRepository, ProjectMembershipRepository>();
-            services.AddScoped<ICommentRepository, CommentRepository>();
+
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ISupplierRepository, SupplierRepository>();
             services.AddScoped<IShelfRepository, ShelfRepository>();
             services.AddScoped<ICategoryRepository, CategoryRepository>();
+            services.AddScoped<IDiscountRepository, DiscountRepository>();
+
 
 
             

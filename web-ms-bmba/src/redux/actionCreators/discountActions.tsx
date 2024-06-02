@@ -17,6 +17,7 @@ import {
     IEditDiscount,
     IEditDiscountFail,
     IEditDiscountSuccess,
+    IOpenAddDiscountModal,
 
 } from '../actionTypes/discountActionTypes';
 import { ICategory } from '../../models/category';
@@ -35,7 +36,9 @@ export const addDiscount = (discount: IDiscount): ThunkAction<Promise<void>, Roo
         type: ActionType.ADD_DISCOUNT
     });
     try {
-        const response: AxiosResponse<IDiscount> = await axios.post(`/discounts`, discount);
+        const payload = { DiscountDto: discount };
+        
+        const response: AxiosResponse<IDiscount> = await axios.post(`/discounts`, payload);        
         dispatch<IAddDiscountSuccess>({
             type: ActionType.ADD_DISCOUNT_SUCCESS,
             payload: response.data  
@@ -93,6 +96,5 @@ export const deleteDiscount = (discountId: number): ThunkAction<Promise<void>, R
         });
     }
 };
-
 
 
