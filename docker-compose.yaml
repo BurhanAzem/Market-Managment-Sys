@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  market_ms.server:
+    build:
+      context: .
+      dockerfile: /TTS.Source/src/API/TTS.Source.API/Dockerfile
+    container_name: server_c
+    ports:
+      - "5000:5000"
+      - "5001:5001"
+
+
+  market_ms.web:
+    build:
+      context: .
+      dockerfile: /web-ms-bmba/Dockerfile.dev
+    container_name: web_c
+    ports:
+      - "3300:3300"
+      
+  market_ms.database:
+    image: postgres:latest
+    container_name: postgres_c
+    environment:
+      - POSTGRES_DB=market_ms
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432

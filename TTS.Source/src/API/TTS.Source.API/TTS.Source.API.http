@@ -1,0 +1,6 @@
+@TTS.Source.API_HostAddress = http://localhost:5280
+
+GET {{TTS.Source.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
