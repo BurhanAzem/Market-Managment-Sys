@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Features\Projects\Commands\Delete\**" />
+    <Compile Remove="Features\Users\**" />
+    <EmbeddedResource Remove="Features\Projects\Commands\Delete\**" />
+    <EmbeddedResource Remove="Features\Users\**" />
+    <None Remove="Features\Projects\Commands\Delete\**" />
+    <None Remove="Features\Users\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Projects\Events\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.9.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+    <PackageReference Include="NETCore.MailKit" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <ProjectReference Include="..\..\Infrastructure\TTS.Source.Infrastructure.EmailService\TTS.Source.Infrastructure.EmailService.csproj" />
+	  <ProjectReference Include="..\TTS.Source.Domain\TTS.Source.Domain.csproj" />
+  </ItemGroup>
+
+</Project>
