@@ -1,123 +1,194 @@
-
 import React, { ReactElement, FC, useState } from "react";
 import {
   Box,
-  FormControl,
   FormControlLabel,
-  FormHelperText,
   IconButton,
   InputAdornment,
-  InputLabel,
-  OutlinedInput,
   Link,
   Typography,
   Button,
   Divider,
-  LinearProgress,
-  CircularProgress
+  CircularProgress,
+  Checkbox,
+  TextField,
+  Alert
 } from "@mui/material";
-import Checkbox from '@mui/material/Checkbox';
-import {
-  Visibility,
-  VisibilityOff,
-  Google,
-  Twitter,
-  Facebook
-} from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useTheme } from "@mui/material";
 import { useTemplateThemeModeContext } from "../../../hooks";
 import { TemplateThemeModeContextType } from "../../../context";
-import { useDispatch, useSelector } from 'react-redux';
-import { loginAuth } from '../../../redux/features/authSlice';
-import { AnyAction } from "redux";
-import { RootActions } from "../../../redux_old/actionCreators/actionResultTypes";
-import { RootState } from "../../../redux_old/store/store";
+// import { signUpAuth } from '../../../redux/features/authSlice'; // Example
 import { useAppDispatch } from "../../../redux/store/hooks";
+import { IUser } from "../../../models/user"; // Ensure this path is correct
 
 const SignUp: FC = (): ReactElement => {
-  const isAuthenticated: boolean = useSelector(
-    (state: RootState) => state.auth.authToken !== ''
-  )
-    const isLoading: boolean = useSelector(
-      (state: RootState) => state.auth.loading);
+  const isLoading = false; // Replace with Redux state if needed
+  const dispatch = useAppDispatch();
 
-      const dispatch = useAppDispatch(); // ✅ Fix: Uses correct typing
-
-
-  // const dispatch = useDispatch();
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [cardId, setCardId] = useState('');
-  const [password, setPassword] = useState('');
-
-  const handleClickShowPassword = () => setShowPassword((show) => !show);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
 
+  // State for IUser fields
+  const [cardId, setCardId] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [birthDate, setBirthDate] = useState<string>(""); // stored as string
+  const [password, setPassword] = useState<string>("");
+  const [identifierIsRequiredMessage, setIdentifierIsRequiredMessage] = useState<string>("");
+
+
   const theme = useTheme();
   const { isDark } = useTemplateThemeModeContext() as TemplateThemeModeContextType;
 
-  const handleLogin = () => {
+  const handleSignUp = () => {
+    if (email == "" && cardId == "" && phoneNumber == "")
+      setIdentifierIsRequiredMessage("You should enter at least one of the following values: cardId, email, or phoneNumber")
+    else {
+      const newUser: Partial<IUser> = {
+        cardId,
+        userName,
+        email,
+        phoneNumber,
+        birthDate,
+      };
 
-      // dispatch(loginAuth({ cardId, password }));
-    
-  }
+      console.log("Signing up user:", newUser);
+
+    }
+
+
+    // Example: dispatch a signup action
+    // dispatch(signUpAuth({ ...newUser, password }));
+  };
 
   return (
     <>
-      {
-        isLoading ?
-          <Box mt={30}>
-            <CircularProgress color="inherit" />
-            {/* <LinearProgress  /> */}
-          </Box>
-          :
+      {isLoading ? (
+        <Box mt={30} display="flex" justifyContent="center">
+          <CircularProgress color="inherit" />
+        </Box>
+      ) : (
+        <Box display={"flex"} flexDirection={"column"}>
+          {identifierIsRequiredMessage && (
+            <Alert severity="warning">{identifierIsRequiredMessage}</Alert>
+          )}
           <Box
-            display='block'
-            m='auto'
+            display="block"
+            m="auto"
             px={3}
             pt={3}
             width={400}
             border={1}
             borderRadius={4}
             boxShadow={12}
-          // sx={{backgroundColor:'#f7d2b9'}}
           >
-            {/* f7ddcd f0d6c5 edd0bc f7d5bf */}
             <Box
               flexGrow={1}
               display="flex"
               py={2}
               px={3}
-              sx={{
-                justifyContent: "space-between",
-                backgroundColor: "inherit"
-              }}
+              sx={{ justifyContent: "space-between" }}
             >
-              <Typography variant="h6">SignUp</Typography>
-              <Link href='/auth/signup' sx={{ fontSize: { xs: '9pt', sm: '9pt', md: '10pt' }, textDecoration: 'none', mt: 1 }}>Don't have an account?</Link>
+              <Typography variant="h6">Sign Up</Typography>
+              <Link
+                href="/"
+                sx={{
+                  fontSize: { xs: "9pt", sm: "9pt", md: "10pt" },
+                  textDecoration: "none",
+                  mt: 1
+                }}
+              >
+                I already have an account
+              </Link>
             </Box>
-            <Box display='block' px={3} mb={3}>
-              <FormControl fullWidth variant="outlined" size='small' sx={{ fontSize: { xs: '9pt', sm: '9pt', md: '10pt' } }}>
-                <InputLabel htmlFor="outlined-input-email" sx={{ fontSize: { xs: '9pt', sm: '10pt', md: '11pt' } }}>Email address</InputLabel>
-                <OutlinedInput
-                  id="outlined-input-email"
-                  type='text'
-                  aria-describedby="my-helper-text"
-                  value={cardId}
-                  onChange={(e) => setCardId(e.target.value)}
-                />
-                <FormHelperText id="my-helper-text" >We'll never share your email.</FormHelperText>
-              </FormControl>
 
-              <FormControl fullWidth variant="outlined" size='small' sx={{ fontSize: { xs: '9pt', sm: '9pt', md: '10pt' } }}>
-                <InputLabel htmlFor="outlined-adornment-password" sx={{ fontSize: { xs: '9pt', sm: '10pt', md: '11pt' } }}>Password</InputLabel>
-                <OutlinedInput
-                  id="outlined-adornment-password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  endAdornment={
+            {/* ─────────────────────────────────────────────
+              User Details Fields (Card ID, Username, Email, Phone)
+              ───────────────────────────────────────────── */}
+            <Box px={3} mb={3}>
+              <TextField
+                fullWidth
+                required
+                variant="outlined"
+                size="small"
+                label="Card ID"
+                value={cardId}
+                onChange={(e) => setCardId(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+
+              <TextField
+                fullWidth
+                required
+                variant="outlined"
+                size="small"
+                label="User Name"
+                aria-autocomplete="none"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+
+              <TextField
+                fullWidth
+                required
+                variant="outlined"
+                size="small"
+                label="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+
+              <TextField
+                fullWidth
+                required
+                variant="outlined"
+                size="small"
+                label="Phone Number"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                sx={{ mb: 2 }}
+              />
+            </Box>
+
+            {/* ─────────────────────────────────────────────
+              Birth Date & Password
+              ───────────────────────────────────────────── */}
+            <Box px={3} mb={3}>
+              <TextField
+                fullWidth
+                required
+                variant="outlined"
+                size="small"
+                label="Birth Date"
+                type="date"
+                value={birthDate}
+                onChange={(e) => setBirthDate(e.target.value)}
+                InputLabelProps={{ shrink: true }}
+                sx={{
+                  mb: 2,
+                  "& .MuiInputBase-root": { height: "35px" }, // Reduce height
+                  "& .MuiOutlinedInput-input": { py: "6px" }, // Adjust padding
+                  fontSize: "0.875rem"
+                }}
+              />
+
+              <TextField
+                fullWidth
+                required
+                variant="outlined"
+                size="small"
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                InputProps={{
+                  endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
                         aria-label="toggle password visibility"
@@ -128,72 +199,53 @@ const SignUp: FC = (): ReactElement => {
                         {showPassword ? <VisibilityOff /> : <Visibility />}
                       </IconButton>
                     </InputAdornment>
-                  }
-                  label="Password"
-                />
-              </FormControl>
-              
+                  ),
+                }}
+              />
             </Box>
 
-
-            <Box display='block' px={3} mb={3}>
-              <FormControl fullWidth variant="outlined" size='small' sx={{ fontSize: { xs: '9pt', sm: '9pt', md: '10pt' } }}>
-                <InputLabel htmlFor="outlined-input-email" sx={{ fontSize: { xs: '9pt', sm: '10pt', md: '11pt' } }}>Email address</InputLabel>
-                <OutlinedInput
-                  id="outlined-input-email"
-                  type='text'
-                  aria-describedby="my-helper-text"
-                  value={cardId}
-                  onChange={(e) => setCardId(e.target.value)}
-                />
-                <FormHelperText id="my-helper-text" >We'll never share your email.</FormHelperText>
-              </FormControl>
-
-              <FormControl fullWidth variant="outlined" size='small' sx={{ fontSize: { xs: '9pt', sm: '9pt', md: '10pt' } }}>
-                <InputLabel htmlFor="outlined-adornment-password" sx={{ fontSize: { xs: '9pt', sm: '10pt', md: '11pt' } }}>Password</InputLabel>
-                <OutlinedInput
-                  id="outlined-adornment-password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  label="Password"
-                />
-              </FormControl>
+            {/* ─────────────────────────────────────────────
+              Keep Me Signed In Checkbox & Forgot Password
+              ───────────────────────────────────────────── */}
+            <Box display="block" px={3} mb={3}>
               <Box
                 display="flex"
-                justifyContent="space-around"
+                justifyContent="space-between"
                 pt={1}
                 flexGrow={1}
-                sx={{ backgroundColor: "inherit" }}
               >
                 <FormControlLabel
-                  sx={{ '& .MuiFormControlLabel-label': { fontSize: { xs: '9pt', sm: '9pt', md: '10pt' } } }}
-                  control={<Checkbox size='small' />}
-                  label={'Keep me sign in'}
+                  control={<Checkbox size="small" />}
+                  label="Keep me signed in"
                 />
-                <Link href='/auth/forgetpassword' sx={{ mt: 1, fontSize: { xs: '9pt', sm: '9pt', md: '10pt' }, textDecoration: 'none', fontColor: 'black' }}>Forget Password?</Link>
+                <Link
+                  href="/auth/forgetpassword"
+                  sx={{ mt: 1, textDecoration: "none" }}
+                >
+                  Forget Password?
+                </Link>
               </Box>
-              <Box display='block' justifyContent='center' py={2} >
-                <Button onClick={() => { handleLogin() }} fullWidth variant="contained" color="primary" size='small' sx={{ fontSize: { xs: '9pt', sm: '9pt', md: '10pt' } }}>Submit</Button>
+
+              {/* ─────────────────────────────────────────────
+                Submit Button
+                ───────────────────────────────────────────── */}
+              <Box display="block" justifyContent="center" py={2}>
+                <Button
+                  onClick={handleSignUp}
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  size="small"
+                >
+                  Submit
+                </Button>
               </Box>
-              <Divider sx={{ pb: 1, fontSize: { xs: '9pt', sm: '10pt', md: '8pt' } }}>Powerd by Burhan Azem</Divider>
-            
+
+              <Divider sx={{ pb: 1 }}>Powered by Burhan Azem</Divider>
             </Box>
           </Box>
-      }
-
+        </Box>
+      )}
     </>
   );
 };
