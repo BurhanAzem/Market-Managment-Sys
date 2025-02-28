@@ -1,22 +1,21 @@
 export interface IUser {
-    id: string
-    createdDate: Date
-    cardId: string
-    discriminator: string
-    imagePath: string
-    BirthDate: Date
-    userName: string
-    normalizedUserName: string
-    email: string
-    normalizedEmail: string
-    emailConfirmed: boolean
-    securityStamp: string
-    phoneNumber: boolean
-    phoneNumberConfirmed: boolean
-    concurrencyStamp: string
-    twoFactorEnabled: boolean
-    lockoutEnd: Date
-    lockoutEnabled: boolean
-    accessFailedCount: number
+    id: string;
+    createdDate: string; // ✅ Keep as string since backend sends DateTime
+    cardId: string;
+    discriminator: string | null;
+    imagePath: string | null;
+    birthDate: string | null; // ✅ Use string to avoid TypeScript Date conversion issues
+    userName: string | null;
+    normalizedUserName: string | null;
+    email: string | null;
+    normalizedEmail: string | null;
+    emailConfirmed: boolean | null; // ✅ Can be null in backend
+    securityStamp: string | null;
+    concurrencyStamp: string | null;
+    phoneNumber: string | null; // ✅ Fix: Must allow null
+    phoneNumberConfirmed: boolean | null;
+    twoFactorEnabled: boolean | null;
+    lockoutEnd: string | null; // ✅ Backend sends DateTimeOffset, so keep as string
+    lockoutEnabled: boolean | null;
+    accessFailedCount: number | null; // ✅ Must allow null
 }
-

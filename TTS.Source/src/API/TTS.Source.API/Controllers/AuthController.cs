@@ -29,7 +29,7 @@ namespace TTS.Source.API.Features
         [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Register(
-                    [FromBody] EmployeeRegisterRequest request,
+                    [FromBody] UserRegisterRequest request,
                  CancellationToken cancellationToken)
         {
             var command = request.Adapt<UserRegisterCommand>();

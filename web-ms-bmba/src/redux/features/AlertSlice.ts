@@ -15,7 +15,7 @@ const initialState: AlertState = {
   example: "Placeholder for Alert",
 };
 
-export const AlertSlice = createSlice({
+export const alertSlice = createSlice({
   name: 'alert',
   initialState,
   reducers: {
@@ -31,5 +31,5 @@ export const AlertSlice = createSlice({
   },
 });
 
-export const { setExample } = AlertSlice.actions;
-export default AlertSlice.reducer;
+export const { setExample } = alertSlice.actions;
+export default alertSlice.reducer;

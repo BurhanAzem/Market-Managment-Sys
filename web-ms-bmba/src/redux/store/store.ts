@@ -1,29 +1,30 @@
 import { configureStore } from '@reduxjs/toolkit';
 
 // Import slices
-import alertReducer from '../features/AlertSlice';
-import authReducer from '../features/authSlice';
-import categoryReducer from '../features/categorySlice';
-import companyReducer from '../features/companySlice';
-import discountReducer from '../features/discountSlice';
-import productReducer from '../features/productSlice';
-import shelfReducer from '../features/shelfSlice';
-import supplierReducer from '../features/supplierSlice';
+import alertSlice from '../features/alertSlice';
+import authSlice from '../features/authSlice';
+import categorySlice from '../features/categorySlice';
+import companySlice from '../features/companySlice';
+import discountSlice from '../features/discountSlice';
+import productSlice from '../features/productSlice';
+import shelfSlice from '../features/shelfSlice';
+import supplierSlice from '../features/supplierSlice';
 
 // ---------------------------------------------------------------------------
 // CREATE THE STORE
 // ---------------------------------------------------------------------------
 export const store = configureStore({
   reducer: {
-    alert: alertReducer,
-    auth: authReducer,
-    category: categoryReducer,
-    company: companyReducer,
-    discount: discountReducer,
-    product: productReducer,
-    shelf: shelfReducer,
-    supplier: supplierReducer,
+    alert: alertSlice,
+    auth: authSlice,
+    category: categorySlice,
+    company: companySlice,
+    discount: discountSlice,
+    product: productSlice,
+    shelf: shelfSlice,
+    supplier: supplierSlice,
   },
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
 });
 
 // Infer RootState and AppDispatch

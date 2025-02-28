@@ -6,8 +6,8 @@ import { ProSidebarProvider } from "react-pro-sidebar";
 import reportWebVitals from './reportWebVitals';
 import './languages-set/i18next'
 import App from './App';
-import { store } from './redux_old/store/store'
 import { ContextProvider } from './context';
+import { store } from './redux/store/store';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(

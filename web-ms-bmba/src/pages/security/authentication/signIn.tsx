@@ -1,4 +1,4 @@
-import React, { ReactElement, FC, useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import {
   Box,
   FormControl,
@@ -12,153 +12,195 @@ import {
   Typography,
   Button,
   Divider,
-  LinearProgress,
-  CircularProgress
+  CircularProgress,
+  Checkbox,
+  TextField
 } from "@mui/material";
-import Checkbox from '@mui/material/Checkbox';
-import {
-  Visibility,
-  VisibilityOff,
-  Google,
-  Twitter,
-  Facebook
-} from "@mui/icons-material";
-import { useTheme } from "@mui/material";
-import { useTemplateThemeModeContext } from "../../../hooks";
-import { TemplateThemeModeContextType } from "../../../context";
-import { RootState } from '../../../redux_old/store/store';
-import { useDispatch, useSelector } from "react-redux";
-import { ActionType } from "../../../redux_old/actionTypes/authActionTypes";
-import { LoginAuthStart } from "../../../redux_old/actionCreators/authActions";
-import { ThunkDispatch } from 'redux-thunk';
-import { AnyAction } from "redux";
-import { RootActions } from "../../../redux_old/actionCreators/actionResultTypes";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-const SignIn: FC = (): ReactElement => {
-  const isAuthenticated: boolean = useSelector(
-    (state: RootState) => state.auth.authToken !== ''
-  )
-  const isLoading: boolean = useSelector(
-    (state: RootState) => state.auth.loading
-  )
-  const dispatch: ThunkDispatch<RootState, void, RootActions> = useDispatch();
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../../redux/store/hooks";
+import { loginAuth } from "../../../redux/features/authSlice";
+import { RootState } from "../../../redux/store/store";
+import { size } from "lodash";
+import { useNavigate } from "react-router-dom";
 
-  // const dispatch = useDispatch();
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [cardId, setCardId] = useState('');
-  const [password, setPassword] = useState('');
+const SignIn = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate(); // Initialize navigation
+
+  const isAuthenticated = useSelector((state: RootState) => state.auth.authToken != "");
+  const isLoading = useSelector((state: RootState) => state.auth.loading);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [cardId, setCardId] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [selectedLoginIdentifierMethod, setSelectedLoginIdentifierMethod] = useState("");
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
   };
 
-  const theme = useTheme();
-  const { isDark } = useTemplateThemeModeContext() as TemplateThemeModeContextType;
-
   const handleLogin = () => {
-    dispatch(LoginAuthStart(cardId, password));
-  }
+    dispatch(loginAuth({ cardId, email, phoneNumber, password }));
+    console.log("Login Dispatch Called")
+  };
+
+  // Redirect to home if login is successful
+  useEffect(() => {
+    if (isAuthenticated) {
+      console.log("ye sssss");
+      
+      navigate("/"); // Change "/home" to your desired route
+    }
+  }, [isAuthenticated]);
 
   return (
     <>
-      {
-        isLoading ?
-          <Box mt={30}>
-            <CircularProgress color="inherit" />
-            {/* <LinearProgress  /> */}
-          </Box>
-          :
-          <Box
-            display='block'
-            m='auto'
-            px={3}
-            pt={3}
-            width={400}
-            border={1}
-            borderRadius={4}
-            boxShadow={12}
-          // sx={{backgroundColor:'#f7d2b9'}}
-          >
-            {/* f7ddcd f0d6c5 edd0bc f7d5bf */}
-            <Box
-              flexGrow={1}
-              display="flex"
-              py={2}
-              px={3}
-              sx={{
-                justifyContent: "space-between",
-                backgroundColor: "inherit"
-              }}
-            >
-              <Typography variant="h6">Login</Typography>
-              <Link href='/auth/signup' sx={{ fontSize: { xs: '9pt', sm: '9pt', md: '10pt' }, textDecoration: 'none', mt: 1 }}>Don't have an account?</Link>
-            </Box>
-            <Box display='block' px={3} mb={3}>
-              <FormControl fullWidth variant="outlined" size='small' sx={{ fontSize: { xs: '9pt', sm: '9pt', md: '10pt' } }}>
-                <InputLabel htmlFor="outlined-input-email" sx={{ fontSize: { xs: '9pt', sm: '10pt', md: '11pt' } }}>Email address</InputLabel>
-                <OutlinedInput
-                  id="outlined-input-email"
-                  type='text'
-                  aria-describedby="my-helper-text"
-                  value={cardId}
-                  onChange={(e) => setCardId(e.target.value)}
-                />
-                <FormHelperText id="my-helper-text" >We'll never share your email.</FormHelperText>
-              </FormControl>
-
-              <FormControl fullWidth variant="outlined" size='small' sx={{ fontSize: { xs: '9pt', sm: '9pt', md: '10pt' } }}>
-                <InputLabel htmlFor="outlined-adornment-password" sx={{ fontSize: { xs: '9pt', sm: '10pt', md: '11pt' } }}>Password</InputLabel>
-                <OutlinedInput
-                  id="outlined-adornment-password"
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  label="Password"
-                />
-              </FormControl>
-              <Box
-                display="flex"
-                justifyContent="space-around"
-                pt={1}
-                flexGrow={1}
-                sx={{ backgroundColor: "inherit" }}
-              >
-                <FormControlLabel
-                  sx={{ '& .MuiFormControlLabel-label': { fontSize: { xs: '9pt', sm: '9pt', md: '10pt' } } }}
-                  control={<Checkbox size='small' />}
-                  label={'Keep me sign in'}
-                />
-                <Link href='/auth/forgetpassword' sx={{ mt: 1, fontSize: { xs: '9pt', sm: '9pt', md: '10pt' }, textDecoration: 'none', fontColor: 'black' }}>Forget Password?</Link>
-              </Box>
-              <Box display='block' justifyContent='center' py={2} >
-                <Button onClick={() => { handleLogin() }} fullWidth variant="contained" color="primary" size='small' sx={{ fontSize: { xs: '9pt', sm: '9pt', md: '10pt' } }}>Login</Button>
-              </Box>
-              <Divider sx={{ pb: 1, fontSize: { xs: '9pt', sm: '10pt', md: '8pt' } }}>Powerd by Burhan Azem</Divider>
-              {/* <Box 
-          display='flex'
-          justifyContent='center'
-          color= {isDark ? theme.palette.info.dark : theme.palette.info.light}
-          fontSize={10}
+      {isLoading ? (
+        <Box mt={30} display="flex" justifyContent="center">
+          <CircularProgress color="inherit" />
+        </Box>
+      ) : (
+        <Box
+          display="block"
+          m="auto"
+          px={3}
+          pt={3}
+          width={400}
+          border={1}
+          borderRadius={4}
+          boxShadow={12}
         >
-          Powerd by Burhan Azem
-        </Box> */}
-            </Box>
-          </Box>
-      }
+          <Box
+            flexGrow={1}
+            display="flex"
+            py={2}
+            px={3}
+            justifyContent="space-between"
+            sx={{ backgroundColor: "inherit" }} // ✅ Correct way to style Box
+          >
 
+            <Typography variant="h6">Login</Typography>
+            <Link href="/auth/signup" sx={{ fontSize: "10pt", textDecoration: "none", mt: 1 }}>
+              Don't have an account?
+            </Link>
+          </Box>
+          {selectedLoginIdentifierMethod === "" ? (
+            <Box>
+
+
+              <Box px={3} mb={3}>
+                <Box fontSize={13} textAlign={"center"} py={0}>
+                  Choose a suitable login method!
+                </Box>
+                <Box py={2}>
+                  <Button variant="contained" fullWidth onClick={() => setSelectedLoginIdentifierMethod("email")}>Email</Button>
+                </Box>
+                <Box py={2}>
+                  <Button variant="contained" fullWidth onClick={() => setSelectedLoginIdentifierMethod("cardId")}>Card ID</Button>
+                </Box>
+                <Box py={2}>
+                  <Button variant="contained" fullWidth onClick={() => setSelectedLoginIdentifierMethod("phone")}>Phone Number</Button>
+                </Box>
+              </Box>
+            </Box>
+          ) : (
+            <Box>
+              <Box px={3} mb={3}>
+                <FormControl fullWidth variant="outlined" size="small">
+                  <InputLabel htmlFor="outlined-input-login">
+                    {selectedLoginIdentifierMethod === "email"
+                      ? "Email Address"
+                      : selectedLoginIdentifierMethod === "cardId"
+                        ? "Card ID"
+                        : selectedLoginIdentifierMethod === "phone"
+                          ? "Phone Number"
+                          : "Unknown"}
+                  </InputLabel>
+
+                  <OutlinedInput
+                    id="outlined-input-login" // ✅ Match with InputLabel's htmlFor
+                    type="text"
+                    value={
+                      selectedLoginIdentifierMethod === "email"
+                        ? email
+                        : selectedLoginIdentifierMethod === "cardId"
+                          ? cardId
+                          : selectedLoginIdentifierMethod === "phone"
+                            ? phoneNumber
+                            : ""
+                    }
+                    onChange={(e) => {
+                      if (selectedLoginIdentifierMethod === "email") {
+                        setEmail(e.target.value);
+                      } else if (selectedLoginIdentifierMethod === "cardId") {
+                        setCardId(e.target.value);
+                      } else if (selectedLoginIdentifierMethod === "phone") {
+                        setPhoneNumber(e.target.value);
+                      }
+                    }}
+                    label={
+                      selectedLoginIdentifierMethod === "email"
+                        ? "Email Address"
+                        : selectedLoginIdentifierMethod === "cardId"
+                          ? "Card ID"
+                          : selectedLoginIdentifierMethod === "phone"
+                            ? "Phone Number"
+                            : "Unknown"
+                    } 
+                  />
+                </FormControl>
+
+
+                <FormControl fullWidth variant="outlined" size="small" sx={{ mt: 2 }}>
+                  <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                  <OutlinedInput
+                    id="outlined-adornment-password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
+                    label="Password"
+                  />
+                </FormControl>
+
+                <Box display="flex" justifyContent="space-between" pt={1}>
+                  <FormControlLabel
+                    control={<Checkbox size="small" />}
+                    label="Keep me signed in"
+                  />
+                  <Link href="/auth/forgetpassword" sx={{ mt: 1, fontSize: "10pt", textDecoration: "none" }}>
+                    Forgot Password?
+                  </Link>
+                </Box>
+
+                <Box py={2}>
+                  <Button onClick={handleLogin} fullWidth variant="contained" color="primary">
+                    Login
+                  </Button>
+                </Box>
+
+                <Divider sx={{ pb: 1, fontSize: "8pt" }}>Powered by Burhan Azem</Divider>
+              </Box>
+            </Box>
+          )}
+        </Box>
+      )}
     </>
   );
 };
