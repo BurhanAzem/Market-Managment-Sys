@@ -60,6 +60,44 @@ export const loginAuth = createAsyncThunk<
   }
 );
 
+export const registerAuth = createAsyncThunk<
+  IAuth,
+  { cardId: string; userName: string; email: string; phoneNumber: string; userRole: string; password: string },
+  { rejectValue: string }
+>(
+  "auth/register",
+  async ({ cardId, userName, email, phoneNumber, userRole, password }, { rejectWithValue }) => {
+    try {
+      // Helper function to handle nullable values
+      const cleanValue = (val: string) => (val.trim() === "" ? null : val);
+
+      const response = await axios.post<IAuth>(
+        "/auth/register",
+        {
+          cardId,
+          userName,
+          email: cleanValue(email),
+          phoneNumber: cleanValue(phoneNumber),
+          userRole,
+          password,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      console.log("✅ API Response:", response.data);
+
+      return response.data;
+    } catch (err: any) {
+      console.error("❌ Registration API Error:", err.response?.data);
+
+      return rejectWithValue(
+        err.response?.data?.message || "Registration failed due to a server error"
+      );
+    }
+  }
+);
+
+
 
 
 // ✅ Fixed `logoutAuth` Thunk
@@ -86,16 +124,33 @@ export const authSlice = createSlice({
       .addCase(loginAuth.pending, (state) => {
         state.loading = true;
         state.error = null;
-        console.log("🔄 Login Pending - Redux State:", state);
+        console.log("🔄 Registration Pending - Redux State:", state);
       })
       .addCase(loginAuth.fulfilled, (state, action: PayloadAction<IAuth>) => {
         state.loading = false;
         state.authToken = action.payload.token;
         state.user = action.payload.userDto;
         state.error = null;
-        console.log("✅ Login Success - Redux State Updated:", state);
+        console.log("✅ Registration Success - Redux State Updated:", state);
       })
       .addCase(loginAuth.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Login failed";
+        console.log("❌ Registration Failed - Redux State:", state);
+      })
+      
+      .addCase(registerAuth.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        console.log("🔄 register Pending - Redux State:", state);
+      })
+      .addCase(registerAuth.fulfilled, (state, action: PayloadAction<IAuth>) => {
+        state.loading = false;
+
+        state.error = null;
+        console.log("✅ Login Success - Redux State Updated:", state);
+      })
+      .addCase(registerAuth.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "Login failed";
         console.log("❌ Login Failed - Redux State:", state);

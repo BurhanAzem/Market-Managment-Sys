@@ -11,7 +11,11 @@ import {
   CircularProgress,
   Checkbox,
   TextField,
-  Alert
+  Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useTheme } from "@mui/material";
@@ -20,10 +24,16 @@ import { TemplateThemeModeContextType } from "../../../context";
 // import { signUpAuth } from '../../../redux/features/authSlice'; // Example
 import { useAppDispatch } from "../../../redux/store/hooks";
 import { IUser } from "../../../models/user"; // Ensure this path is correct
+import { registerAuth } from "../../../redux/features/authSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store/store";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const SignUp: FC = (): ReactElement => {
-  const isLoading = false; // Replace with Redux state if needed
+
   const dispatch = useAppDispatch();
+  const isLoading = useSelector((state: RootState) => state.auth.loading);
+  const error = useSelector((state: RootState) => state.auth.error);
 
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -36,34 +46,28 @@ const SignUp: FC = (): ReactElement => {
   const [userName, setUserName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
-  const [birthDate, setBirthDate] = useState<string>(""); // stored as string
+  const [userRole, setUserRole] = useState<string>(""); // stored as string
   const [password, setPassword] = useState<string>("");
   const [identifierIsRequiredMessage, setIdentifierIsRequiredMessage] = useState<string>("");
+  const navigate = useNavigate(); // Initialize navigation
 
 
   const theme = useTheme();
   const { isDark } = useTemplateThemeModeContext() as TemplateThemeModeContextType;
 
   const handleSignUp = () => {
-    if (email == "" && cardId == "" && phoneNumber == "")
-      setIdentifierIsRequiredMessage("You should enter at least one of the following values: cardId, email, or phoneNumber")
-    else {
-      const newUser: Partial<IUser> = {
-        cardId,
-        userName,
-        email,
-        phoneNumber,
-        birthDate,
-      };
-
-      console.log("Signing up user:", newUser);
-
+    if (email === "" && cardId === "" && phoneNumber === "") {
+      setIdentifierIsRequiredMessage("You should enter at least one of the following fields: Card ID, Email, or Phone Number");
+    } else {
+      dispatch(registerAuth({ cardId, userName, email, phoneNumber, userRole, password }));
+      console.log("registerAuth Dispatch Called");
+      navigate('/');
     }
-
-
-    // Example: dispatch a signup action
-    // dispatch(signUpAuth({ ...newUser, password }));
   };
+
+
+  // Example: dispatch a signup action
+  // dispatch(signUpAuth({ ...newUser, password }));
 
   return (
     <>
@@ -74,7 +78,22 @@ const SignUp: FC = (): ReactElement => {
       ) : (
         <Box display={"flex"} flexDirection={"column"}>
           {identifierIsRequiredMessage && (
-            <Alert severity="warning">{identifierIsRequiredMessage}</Alert>
+
+            <Box display="block"
+              m="auto"
+              px={3}
+              py={2}
+              width={400}
+            ><Alert severity="warning">{identifierIsRequiredMessage}</Alert></Box>
+          )}
+          {error && (
+
+            <Box display="block"
+              m="auto"
+              px={3}
+              py={2}
+              width={400}
+            ><Alert severity="error">{error}</Alert></Box>
           )}
           <Box
             display="block"
@@ -82,9 +101,9 @@ const SignUp: FC = (): ReactElement => {
             px={3}
             pt={3}
             width={400}
-            border={1}
+            border={0.2}
             borderRadius={4}
-            boxShadow={12}
+            boxShadow={6}
           >
             <Box
               flexGrow={1}
@@ -118,7 +137,7 @@ const SignUp: FC = (): ReactElement => {
                 label="Card ID"
                 value={cardId}
                 onChange={(e) => setCardId(e.target.value)}
-                sx={{ mb: 2 }}
+                sx={{ mb: 2.5 }}
               />
 
               <TextField
@@ -130,7 +149,7 @@ const SignUp: FC = (): ReactElement => {
                 aria-autocomplete="none"
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
-                sx={{ mb: 2 }}
+                sx={{ mb: 2.5 }}
               />
 
               <TextField
@@ -141,7 +160,7 @@ const SignUp: FC = (): ReactElement => {
                 label="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                sx={{ mb: 2 }}
+                sx={{ mb: 2.5 }}
               />
 
               <TextField
@@ -152,15 +171,9 @@ const SignUp: FC = (): ReactElement => {
                 label="Phone Number"
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
-                sx={{ mb: 2 }}
+                sx={{ mb: 2.5 }}
               />
-            </Box>
-
-            {/* ─────────────────────────────────────────────
-              Birth Date & Password
-              ───────────────────────────────────────────── */}
-            <Box px={3} mb={3}>
-              <TextField
+              {/* <TextField
                 fullWidth
                 required
                 variant="outlined"
@@ -171,12 +184,27 @@ const SignUp: FC = (): ReactElement => {
                 onChange={(e) => setBirthDate(e.target.value)}
                 InputLabelProps={{ shrink: true }}
                 sx={{
-                  mb: 2,
-                  "& .MuiInputBase-root": { height: "35px" }, // Reduce height
-                  "& .MuiOutlinedInput-input": { py: "6px" }, // Adjust padding
-                  fontSize: "0.875rem"
+                  mb: 2.5,
                 }}
-              />
+              /> */}
+
+              <FormControl fullWidth size="small" sx={{ mb: 2.5 }}>
+                <InputLabel id="demo-select-small-label">User Role</InputLabel>
+                <Select
+                  labelId="demo-select-small-label"
+                  id="demo-select-small"
+                  value={userRole}
+                  label="User Role"
+                  onChange={(e) => setUserRole(e.target.value)} // Fixed onChange function
+                >
+                  <MenuItem value="">
+                    <em>None</em>
+                  </MenuItem>
+                  <MenuItem value="Manager">Manager</MenuItem>
+                  <MenuItem value="Customer">Customer</MenuItem>
+                  <MenuItem value="Employee">Employee</MenuItem>
+                </Select>
+              </FormControl>
 
               <TextField
                 fullWidth
@@ -205,27 +233,16 @@ const SignUp: FC = (): ReactElement => {
             </Box>
 
             {/* ─────────────────────────────────────────────
+              Birth Date & Password
+              ───────────────────────────────────────────── */}
+            {/* <Box px={3} mb={3}> */}
+
+            {/* </Box> */}
+
+            {/* ─────────────────────────────────────────────
               Keep Me Signed In Checkbox & Forgot Password
               ───────────────────────────────────────────── */}
             <Box display="block" px={3} mb={3}>
-              <Box
-                display="flex"
-                justifyContent="space-between"
-                pt={1}
-                flexGrow={1}
-              >
-                <FormControlLabel
-                  control={<Checkbox size="small" />}
-                  label="Keep me signed in"
-                />
-                <Link
-                  href="/auth/forgetpassword"
-                  sx={{ mt: 1, textDecoration: "none" }}
-                >
-                  Forget Password?
-                </Link>
-              </Box>
-
               {/* ─────────────────────────────────────────────
                 Submit Button
                 ───────────────────────────────────────────── */}
@@ -248,6 +265,6 @@ const SignUp: FC = (): ReactElement => {
       )}
     </>
   );
-};
 
+};
 export default SignUp;
