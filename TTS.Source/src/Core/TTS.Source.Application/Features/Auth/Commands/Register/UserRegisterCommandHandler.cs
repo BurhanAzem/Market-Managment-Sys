@@ -20,28 +20,30 @@ namespace TTS.Source.Application.Features.Identity.Commands.Register
             CancellationToken cancellationToken)
         {
             User user;
-            if (request.CardId != null)
+            if (request.CardId != "")
             {
                 user = await _userIdentity.GetUserByCardIdAsync(request.CardId);
-                if (user != null)
+                if (user != null && user.Discriminator == request.UserRole)
                 {
-                    throw new BadRequestException("user already exists");
+
+                    throw new BadRequestException($"user already exists with1 {request.CardId} {user}");
                 }
             }
             else if (request.PhoneNumber != null)
             {
                 user = await _userIdentity.GetUserByPhoneNumberAsync(request.PhoneNumber);
-                if (user == null)
+                if (user != null && user.Discriminator == request.UserRole)
                 {
-                    throw new BadRequestException("user already exists");
+
+                    throw new BadRequestException($"user already exists with2 {request.PhoneNumber}  {user}");
                 }
             }
             else if (request.Email != null)
             {
                 user = await _userIdentity.GetUserByEmailAddressAsync(request.Email);
-                if (user == null)
+                if (user != null && user.Discriminator == request.UserRole)
                 {
-                    throw new BadRequestException("user already exists");
+                    throw new BadRequestException($"user already exists with3 {request.Email} {user}");
                 }
 
             }
@@ -49,35 +51,30 @@ namespace TTS.Source.Application.Features.Identity.Commands.Register
             {
                 throw new BadRequestException("email or phone number or card id must be provided.");
             }
-            
-            User userRe = null;
+
+
+
+            User newUser = null;
             switch (request.UserRole)
             {
                 case "Employee":
-                    userRe = new Employee(request.Email, request.UserName,
+                    newUser = new Employee(request.Email, request.UserName,
                     request.CardId, request.PhoneNumber);
                     break;
 
                 case "Customer":
-                    userRe = new Customer(request.Email, request.UserName,
+                    newUser = new Customer(request.Email, request.UserName,
                         request.CardId, request.PhoneNumber);
                     break;
                 case "Manager":
-                    userRe = new Manager(request.Email, request.UserName,
+                    newUser = new Manager(request.Email, request.UserName,
                                             request.CardId, request.PhoneNumber);
                     break;
             }
             UserResponseModel response;
 
-            if (userRe != null)
-            {
-                response = await _userIdentity.SignUpAsync(userRe, request.Password);
-                // Handle the response here
-            }
-            else
-            {
-                throw new BadRequestException("You entered invalid user type");
-            }
+
+            response = await _userIdentity.SignUpAsync(newUser, request.Password);
 
             return response;
         }

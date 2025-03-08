@@ -30,17 +30,27 @@ const initialState: AuthState = {
 // ✅ Fixed `loginAuth` Thunk
 export const loginAuth = createAsyncThunk<
   IAuth, // ✅ Ensure it matches the API response
-  { cardId: string; email: string; phoneNumber: string; password: string },
+  { cardId: string; email: string; phoneNumber: string; userRole: string; password: string },
   { rejectValue: string }
 >(
   "auth/login",
-  async ({ cardId, email, phoneNumber, password }, { rejectWithValue }) => {
+  async ({ cardId, email, phoneNumber, userRole, password }, { rejectWithValue }) => {
     try {
+
+      const cleanValue = (val: string) => (val.trim() === "" ? null : val);
+
       const response = await axios.post<IAuth>(
         "/auth/login",
-        { email, phoneNumber, cardId, password },
+        {
+          cardId: cleanValue(cardId),
+          email: cleanValue(email),
+          phoneNumber: cleanValue(phoneNumber),
+          userRole: cleanValue(userRole),
+          password: cleanValue(password),
+        },
         { headers: { "Content-Type": "application/json" } }
       );
+      
 
       console.log("✅ API Response:", response.data); // Debugging
 
@@ -74,12 +84,12 @@ export const registerAuth = createAsyncThunk<
       const response = await axios.post<IAuth>(
         "/auth/register",
         {
-          cardId,
-          userName,
+          cardId: cleanValue(cardId),
+          userName: cleanValue(userName),
           email: cleanValue(email),
           phoneNumber: cleanValue(phoneNumber),
-          userRole,
-          password,
+          userRole: cleanValue(userRole),
+          password: cleanValue(password),
         },
         { headers: { "Content-Type": "application/json" } }
       );

@@ -4,7 +4,7 @@
     {
         public Guid Id { get; set; }
         public DateTime CreatedDate { get; set; }
-        public string CardId { get; set; }
+        public string? CardId { get; set; }
         public string? Discriminator { get; set; }
         public string? ImagePath { get; set; }
         public DateTime? BirthDate { get; set; }

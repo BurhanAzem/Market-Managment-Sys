@@ -81,12 +81,12 @@ export const typography = {
     fontSize: 14,
     lineHeight: "20px",
     letterSpacing: "0.2px",
-    color: color.awsOrange,
+    color: "#0073BB", // ✅ AWS Blue Link Color
     textAlign: "right",
     cursor: "pointer",
     textDecoration: "underline",
     "&:hover": {
-      color: color.grayishBlue,
+      color: "#00518A", // ✅ Darker AWS Blue on Hover
     },
   },
   itemTitle: {
@@ -102,6 +102,7 @@ export const typography = {
     letterSpacing: 0.3,
   },
 };
+
 
 
 

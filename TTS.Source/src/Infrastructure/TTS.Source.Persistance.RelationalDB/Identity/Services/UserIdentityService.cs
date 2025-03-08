@@ -26,7 +26,7 @@ namespace TTS.Source.Persistance.RelationalDB.Identity.Services
         public async Task<UserResponseModel> SignInAsync(UserLoginCommand userRequestModel)
         {
             // var user = await _userManager.FindByEmailAsync(userRequestModel.Email!);
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.CardId == userRequestModel.CardId);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.CardId == userRequestModel.CardId || u.Email == userRequestModel.Email || u.PhoneNumber == userRequestModel.PhoneNumber && u.Discriminator == userRequestModel.UserRole);
 
 
             if (user == null)
@@ -120,12 +120,12 @@ namespace TTS.Source.Persistance.RelationalDB.Identity.Services
 
         public async Task<User?> GetUserByPhoneNumberAsync(string phoneNumber)
         {
-            return await _userManager.Users.FirstOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
+            return await _userManager.Users.SingleOrDefaultAsync(u => u.PhoneNumber == phoneNumber);
         }
 
         public async Task<User?> GetUserByCardIdAsync(string cardId)
         {
-            return await _userManager.Users.FirstOrDefaultAsync(u => u.CardId == cardId);
+            return await _userManager.Users.SingleOrDefaultAsync(u => u.CardId == cardId);
         }
 
         // public async Task<ForgotPasswordResponseModel> ForgotPasswordAsync(ForgotPasswordModel forgotPasswordModel)

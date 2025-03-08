@@ -26,7 +26,7 @@ namespace TTS.Source.Application.Features.Identity.Commands.Login
                 user = await _userIdentity.GetUserByCardIdAsync(request.CardId);
                 if (user == null)
                 {
-                    throw new BadRequestException("user not exists");
+                    throw new BadRequestException("user not exists1");
                 }
             }
             else if (request.PhoneNumber != null)
@@ -34,7 +34,7 @@ namespace TTS.Source.Application.Features.Identity.Commands.Login
                 user = await _userIdentity.GetUserByPhoneNumberAsync(request.PhoneNumber);
                 if (user == null)
                 {
-                    throw new BadRequestException("user not exists");
+                    throw new BadRequestException("user not exists2");
                 }
             }
             else if (request.Email != null)
@@ -42,7 +42,7 @@ namespace TTS.Source.Application.Features.Identity.Commands.Login
                 user = await _userIdentity.GetUserByEmailAddressAsync(request.Email);
                 if (user == null)
                 {
-                    throw new BadRequestException("user not exists");
+                    throw new BadRequestException("user not exists3");
                 }
 
             }

@@ -59,9 +59,14 @@ const SignUp: FC = (): ReactElement => {
     if (email === "" && cardId === "" && phoneNumber === "") {
       setIdentifierIsRequiredMessage("You should enter at least one of the following fields: Card ID, Email, or Phone Number");
     } else {
-      dispatch(registerAuth({ cardId, userName, email, phoneNumber, userRole, password }));
-      console.log("registerAuth Dispatch Called");
-      navigate('/');
+      if (userName == "" || password == "" || userRole == "") { setIdentifierIsRequiredMessage("Fill the required fieleds"); }
+      else {
+        dispatch(registerAuth({ cardId, userName, email, phoneNumber, userRole, password }));
+        console.log("registerAuth Dispatch Called");
+        if (!error)
+          navigate('/');
+      }
+
     }
   };
 
@@ -131,7 +136,7 @@ const SignUp: FC = (): ReactElement => {
             <Box px={3} mb={3}>
               <TextField
                 fullWidth
-                required
+                // required
                 variant="outlined"
                 size="small"
                 label="Card ID"
@@ -154,7 +159,7 @@ const SignUp: FC = (): ReactElement => {
 
               <TextField
                 fullWidth
-                required
+                // required
                 variant="outlined"
                 size="small"
                 label="Email"
@@ -162,10 +167,9 @@ const SignUp: FC = (): ReactElement => {
                 onChange={(e) => setEmail(e.target.value)}
                 sx={{ mb: 2.5 }}
               />
-
               <TextField
                 fullWidth
-                required
+                // required
                 variant="outlined"
                 size="small"
                 label="Phone Number"
