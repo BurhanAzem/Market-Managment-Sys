@@ -28,6 +28,7 @@ import { loginAuth } from "../../../redux/features/authSlice";
 import { RootState } from "../../../redux/store/store";
 import { size } from "lodash";
 import { useNavigate } from "react-router-dom";
+import { green } from "@mui/material/colors";
 
 const SignIn = () => {
   const dispatch = useAppDispatch();
@@ -83,14 +84,17 @@ const SignIn = () => {
           )}
 
           <Box
-            display="block"
+            display="flex"
+            flexDirection="column"
             // m="auto"
-            px={3}
-            pt={3}
-            width={400}
+            px={4}
+            py={3}
+            width={430}
             border={1}
+            borderColor={"lightgray"}
             borderRadius={4}
-            boxShadow={12}
+            boxShadow={5}
+            // justifyContent="space-between"
           >
 
             <Box
