@@ -130,7 +130,7 @@ const Navbar: FC = (): ReactElement => {
           renderValue={() => (
             <Box display="flex" alignItems="center" gap={1}>
               <Typography fontSize={14} fontWeight={500}>
-                {user ? user.userName : "Guest"}
+                {user ? user.firstName : "Guest"}
               </Typography>
             </Box>
           )}

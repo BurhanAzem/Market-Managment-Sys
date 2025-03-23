@@ -5,7 +5,8 @@ export interface IUser {
     discriminator: string | null;
     imagePath: string | null;
     birthDate: string | null; // ✅ Use string to avoid TypeScript Date conversion issues
-    userName: string | null;
+    firstName: string | null;
+    lastName: string | null;
     normalizedUserName: string | null;
     email: string | null;
     normalizedEmail: string | null;

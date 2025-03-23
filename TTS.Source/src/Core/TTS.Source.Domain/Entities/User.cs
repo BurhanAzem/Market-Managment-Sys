@@ -1,48 +1,46 @@
-﻿using TTS.Source.Domain.Base;
-using Microsoft.AspNetCore.Identity;
-// using TTS.Source.Application.Common.Contracts.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
-namespace TTS.Source.Domain.Entities
+public class User : IdentityUser<Guid>
 {
-    public class User : IdentityUser<Guid>
+    public User(string? cardId) : base()
     {
-        public User(string userName, string? cardId) : base()
-    {
-        UserName = userName;
+        this.UserName = (FirstName + LastName).Replace(" ", "").ToLower();
         CreatedDate = DateTime.Now;
         CardId = cardId;
     }
-        public User(string? email, string userName, string? cardId, string? phoneNumber) : base()
+
+    public User(string? cardId, string FirstName, string LastName) : base()
+    {
+        this.UserName = (FirstName + LastName).Replace(" ", "").ToLower();
+        CreatedDate = DateTime.Now;
+        CardId = cardId;
+    }
+
+    public User(string? email, string? cardId, string? phoneNumber, string FirstName, string LastName) : base()
     {
         Email = email;
-        UserName = userName;
+        this.UserName = (FirstName + LastName).Replace(" ", "").ToLower();
         CreatedDate = DateTime.Now;
         CardId = cardId;
         PhoneNumber = phoneNumber;
     }
-        public User(string? email, string userName, string? cardId, string? phoneNumber, string? imagePath, DateTime? birthDate) : base()
+
+    public User(string? email, string? cardId, string? phoneNumber, string? imagePath, DateTime? birthDate, string FirstName, string LastName) : base()
     {
         Email = email;
-        UserName = userName;
+        this.UserName = (FirstName + LastName).Replace(" ", "").ToLower();
         CreatedDate = DateTime.Now;
         CardId = cardId;
         PhoneNumber = phoneNumber;
         ImagePath = imagePath;
         BirthDate = birthDate;
-        
     }
 
-        public DateTime CreatedDate { get; set; }
-        public string? CardId { get; set; }
-        public string? Discriminator { get; set; }
-        public string? ImagePath { get; set; }
-        public DateTime? BirthDate { get; set; }
-
-        // public virtual ICollection<SalesOperation> CustomerSalesOperations { get; set; }
-        // public virtual ICollection<SalesOperation> SellerSalesOperations { get; set; }
-
-    }
+    public DateTime CreatedDate { get; set; }
+    public string? CardId { get; set; }
+    public string? Discriminator { get; set; }
+    public string? ImagePath { get; set; }
+    public string? FirstName { get; set; }
+    public string? LastName { get; set; }
+    public DateTime? BirthDate { get; set; }
 }
-
-
-

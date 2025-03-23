@@ -43,7 +43,8 @@ const SignUp: FC = (): ReactElement => {
 
   // State for IUser fields
   const [cardId, setCardId] = useState<string>("");
-  const [userName, setUserName] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [phoneNumber, setPhoneNumber] = useState<string>("");
   const [userRole, setUserRole] = useState<string>(""); // stored as string
@@ -59,9 +60,9 @@ const SignUp: FC = (): ReactElement => {
     if (email === "" && cardId === "" && phoneNumber === "") {
       setIdentifierIsRequiredMessage("You should enter at least one of the following fields: Card ID, Email, or Phone Number");
     } else {
-      if (userName == "" || password == "" || userRole == "") { setIdentifierIsRequiredMessage("Fill the required fieleds"); }
+      if (firstName == "" || password == "" || userRole == "") { setIdentifierIsRequiredMessage("Fill the required fieleds"); }
       else {
-        dispatch(registerAuth({ cardId, userName, email, phoneNumber, userRole, password }));
+        dispatch(registerAuth({ cardId, firstName, lastName, email, phoneNumber, userRole, password }));
         console.log("registerAuth Dispatch Called");
         if (!error)
           navigate('/');
@@ -144,18 +145,33 @@ const SignUp: FC = (): ReactElement => {
                 onChange={(e) => setCardId(e.target.value)}
                 sx={{ mb: 2.5 }}
               />
+              <Box display={"flex"} >
+                <TextField
+                  fullWidth
+                  required
+                  variant="outlined"
+                  size="small"
+                  label="First Name"
+                  aria-autocomplete="none"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  sx={{ mb: 2.5, mr: 2.5 }}
+                />
+                <TextField
+                  fullWidth
+                  required
+                  variant="outlined"
+                  size="small"
+                  label="Last Name"
+                  aria-autocomplete="none"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  sx={{ mb: 2.5 }}
+                />
 
-              <TextField
-                fullWidth
-                required
-                variant="outlined"
-                size="small"
-                label="User Name"
-                aria-autocomplete="none"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                sx={{ mb: 2.5 }}
-              />
+
+              </Box>
+
 
               <TextField
                 fullWidth

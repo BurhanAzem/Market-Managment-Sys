@@ -58,17 +58,17 @@ namespace TTS.Source.Application.Features.Identity.Commands.Register
             switch (request.UserRole)
             {
                 case "Employee":
-                    newUser = new Employee(request.Email, request.UserName,
-                    request.CardId, request.PhoneNumber);
+                    newUser = new Employee(request.Email,
+                    request.CardId, request.PhoneNumber, request.FirstName, request.LastName);
                     break;
 
                 case "Customer":
-                    newUser = new Customer(request.Email, request.UserName,
-                        request.CardId, request.PhoneNumber);
+                    newUser = new Customer(request.Email,
+                        request.CardId, request.PhoneNumber, request.FirstName, request.LastName);
                     break;
                 case "Manager":
-                    newUser = new Manager(request.Email, request.UserName,
-                                            request.CardId, request.PhoneNumber);
+                    newUser = new Manager(request.Email,
+                                            request.CardId, request.PhoneNumber, request.FirstName, request.LastName);
                     break;
             }
             UserResponseModel response;

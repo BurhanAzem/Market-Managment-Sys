@@ -27,7 +27,7 @@ namespace TTS.Source.Application.Features.Projects.Queries
             Expression<Func<Product, bool>> predicate = p =>
                 (string.IsNullOrEmpty(request.ProductName) || p.Name.Contains(request.ProductName)) &&
                 (string.IsNullOrEmpty(request.CategoryName) || p.Category.Name.Contains(request.CategoryName)) &&
-                (string.IsNullOrEmpty(request.SupplierName) || p.Supplier.Name.Contains(request.SupplierName)) &&
+                // (string.IsNullOrEmpty(request.SupplierName) || p.Supplier.Name.Contains(request.SupplierName)) &&
                 (string.IsNullOrEmpty(request.SelfCode) || p.Shelf.ShelfCode.Contains(request.SelfCode));
             // (p.OwnerId == CurrentMemberId || p.Memberships.Any(m => m.Member.Id == CurrentMemberId)
 

@@ -27,7 +27,7 @@ namespace TTS.Source.Application.Features.Projects.Queries
                 .Select(s => new SupplierDto
                 {
                     Id = s.Id,
-                    Name = s.Name,
+                    // Name = s.Name,
                     Address = s.Address,
                     CreatedDate = s.CreatedDate,
                     Email = s.Email,
