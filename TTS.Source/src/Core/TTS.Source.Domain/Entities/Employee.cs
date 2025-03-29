@@ -1,3 +1,5 @@
+using TTS.Source.Domain.Entities;
+
 public class Employee : User
 {
     public Employee(string cardId) : base(cardId) { }
@@ -17,5 +19,9 @@ public class Employee : User
 
     public DateTime HireDate { get; set; }
     public decimal? Salary { get; set; }
+    public Manager? Manager { get; set; }
+
     public Guid? ManagerId { get; set; }
+    public ICollection<SalesOperation> SalesOperation { get; set; }
+
 }

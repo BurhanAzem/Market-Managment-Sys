@@ -14,8 +14,7 @@ namespace TTS.Source.Persistance.RelationalDB.EntityConfiguration
     {
         builder.ToTable("Supplier");
  
-        builder.Property(p => p.firstName);
-        builder.Property(p => p.lastName);
+        builder.Property(p => p.Name);
         builder.Property(p => p.Address);
         builder.Property(p => p.PhoneNumber);
         builder.Property(p => p.CreatedDate).HasColumnType("date");

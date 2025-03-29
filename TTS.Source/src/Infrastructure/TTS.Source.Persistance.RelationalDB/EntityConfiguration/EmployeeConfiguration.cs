@@ -17,10 +17,11 @@ namespace TTS.Source.Persistance.RelationalDB.EntityConfiguration
         builder.Property(p => p.Salary);
 
 
-        // builder.HasMany(u => u.EmployeeSalesOperations)
-        //        .WithOne(so => so.Employee)
-        //        .HasForeignKey(so => so.EmployeeId)
-        //        .OnDelete(DeleteBehavior.Restrict);
+builder.HasMany(u => u.SalesOperation)
+       .WithOne(so => so.Employee)
+       .HasForeignKey(so => so.EmployeeId)
+       .OnDelete(DeleteBehavior.Restrict);
+
 
     }
 }

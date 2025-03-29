@@ -19,10 +19,10 @@ namespace TTS.Source.Persistance.RelationalDB.EntityConfiguration
 
 
 
-        // builder.HasMany(u => u.Employees)
-        //        .WithOne(so => so.Manager)
-        //        .HasForeignKey(so => so.ManagerId)
-        //        .OnDelete(DeleteBehavior.Restrict);
+        builder.HasMany(u => u.Employees)
+               .WithOne(so => so.Manager)
+               .HasForeignKey(so => so.ManagerId)
+               .OnDelete(DeleteBehavior.Restrict);
 
     }
 }

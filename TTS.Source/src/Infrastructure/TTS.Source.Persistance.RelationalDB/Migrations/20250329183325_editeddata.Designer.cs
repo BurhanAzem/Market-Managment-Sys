@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TTS.Source.Persistance.RelationalDB;
@@ -11,9 +12,11 @@ using TTS.Source.Persistance.RelationalDB;
 namespace TTS.Source.Persistance.RelationalDB.Migrations
 {
     [DbContext(typeof(TTSDBContext))]
-    partial class TTSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250329183325_editeddata")]
+    partial class editeddata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

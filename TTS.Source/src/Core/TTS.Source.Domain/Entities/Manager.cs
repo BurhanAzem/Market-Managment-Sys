@@ -49,5 +49,6 @@ namespace TTS.Source.Domain.Entities
 
         public int? Branch_number { get; set; }
         public ICollection<Employee> Employees { get; set; } = new List<Employee>();
+        
     }
 }
