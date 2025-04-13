@@ -25,18 +25,7 @@ namespace TTS.Source.Persistance.RelationalDB.Repositories
                 throw new BadRequestException("This product already exists! You can update it.");
             }
 
-            // Check if the category exists or create a new one
-            // var category = await _dbContext.Categories.FirstOrDefaultAsync(p => p.Name == productDto.CategoryDto.Name, cancellationToken);
-            // if (category == null)
-            // {
-            //     category = new Category
-            //     {
-            //         Name = productDto.CategoryDto.Name,
-            //         Description = productDto.CategoryDto.Description
-            //     };
-            //     _dbContext.Categories.Add(category);
-            //     await _dbContext.SaveChangesAsync(cancellationToken);
-            // }
+
             Discount discount = new Discount();
             // Create a new discount
             if (productDto.DiscountDto != null)
@@ -49,19 +38,7 @@ namespace TTS.Source.Persistance.RelationalDB.Repositories
             }
 
 
-            // // Check if the shelf exists or create a new one
-            // var shelf = await _dbContext.Shelfs.FirstOrDefaultAsync(p => p.ShelfCode == productDto.ShelfDto.ShelfCode, cancellationToken);
-            // if (shelf == null)
-            // {
-            //     shelf = new Shelf
-            //     {
-            //         ShelfCode = productDto.ShelfDto.ShelfCode
-            //     };
-            //     _dbContext.Shelfs.Add(shelf);
-            //     await _dbContext.SaveChangesAsync(cancellationToken);
-            // }
-
-            // Create the new product
+          
             var product = new Product
             {
                 BarCode = productDto.BarCode,
@@ -80,7 +57,6 @@ namespace TTS.Source.Persistance.RelationalDB.Repositories
                 MinimumQuantityOfProductsPresentedForWholesale = productDto.MinimumQuantityOfProductsPresentedForWholesale,
                 QuantityOfProductsPresentedForRetail = productDto.QuantityOfProductsPresentedForRetail,
                 QuantityOfProductsPresentedForWholesale = productDto.QuantityOfProductsPresentedForWholesale,
-                SupplierId = productDto.SupplierId
             };
 
             // Add the product to the database
@@ -141,8 +117,6 @@ namespace TTS.Source.Persistance.RelationalDB.Repositories
 
             product.CategoryId = productDto.CategoryId != null ? productDto.CategoryId : product.CategoryId;
             product.ShelfId = productDto.ShelfId != null ? productDto.ShelfId : product.ShelfId;
-            product.SupplierId = productDto.SupplierId != null ? productDto.SupplierId : product.SupplierId;
-            // product.CreatedDate = DateTime.Now,
             product.CurrentRetailPurchasingPrice = productDto.CurrentRetailPurchasingPrice != null ? productDto.CurrentRetailPurchasingPrice : product.CurrentRetailPurchasingPrice;
             product.CurrentRetailSellingPrice = (decimal)(productDto.CurrentRetailSellingPrice != null ? productDto.CurrentRetailSellingPrice : product.CurrentRetailSellingPrice);
             product.CurrentWholeSalePurchasingPrice = productDto.CurrentWholeSalePurchasingPrice != null ? productDto.CurrentWholeSalePurchasingPrice : product.CurrentWholeSalePurchasingPrice;

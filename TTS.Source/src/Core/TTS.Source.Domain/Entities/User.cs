@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using TTS.Source.Domain.Entities;
 
 public class User : IdentityUser<Guid>
 {
@@ -14,6 +15,16 @@ public class User : IdentityUser<Guid>
         this.UserName = (FirstName + LastName).Replace(" ", "").ToLower();
         CreatedDate = DateTime.Now;
         CardId = cardId;
+    }
+
+
+    public User(string Email, string UserName, bool EmailConfirmed, string Discriminator) : base()
+    {
+        this.Email = Email;
+        this.EmailConfirmed = EmailConfirmed;
+        this.Discriminator = Discriminator;
+        this.UserName = UserName;
+        CreatedDate = DateTime.Now;
     }
 
     public User(string? email, string? cardId, string? phoneNumber, string FirstName, string LastName) : base()
@@ -43,4 +54,7 @@ public class User : IdentityUser<Guid>
     public string? FirstName { get; set; }
     public string? LastName { get; set; }
     public DateTime? BirthDate { get; set; }
+    public Debit Debit { get; set; }
+    public string RefreshToken { get; set; }
+    public DateTime RefreshTokenExpiresAtUtc { get; set; }
 }

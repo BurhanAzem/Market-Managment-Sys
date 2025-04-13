@@ -47,7 +47,6 @@ namespace TTS.Source.Application.Features.Projects.Queries
                     Id = p.Id,
                     CategoryId = p.CategoryId,
                     ShelfId = p.ShelfId,
-                    SupplierId = p.SupplierId,
                     DiscountDto = p.Discount?.Adapt<DiscountDto>(), // Assuming Adapt method is used for mapping
                     CategoryDto = p.Category?.Adapt<CategoryDto>(), // Assuming Adapt method is used for mapping
                     ShelfDto = p.Shelf?.Adapt<ShelfDto>(), // Assuming Adapt method is used for mapping

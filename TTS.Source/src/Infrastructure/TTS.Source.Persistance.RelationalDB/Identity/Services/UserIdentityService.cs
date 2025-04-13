@@ -1,9 +1,12 @@
-﻿using EmailService;
+﻿using Authentication.Application.Abstracts;
+using EmailService;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System;
+using System.Security.Claims;
 using TTS.Source.Application.Common.Contracts.Identity;
 using TTS.Source.Application.Common.Exceptions;
 using TTS.Source.Application.Common.Models;
@@ -15,12 +18,13 @@ namespace TTS.Source.Persistance.RelationalDB.Identity.Services
     public class UserIdentityService : IUserIdentityService
     {
         private readonly UserManager<User> _userManager;
-        private readonly IJwtGeneratorService _jwtGeneratorService;
+        private readonly IAuthTokenProcessor _authTokenProcessor;
+
         public UserIdentityService(UserManager<User> userManager,
-            IJwtGeneratorService jwtGeneratorService)
+             IAuthTokenProcessor authTokenProcessor)
         {
             _userManager = userManager;
-            _jwtGeneratorService = jwtGeneratorService;
+            _authTokenProcessor = _authTokenProcessor;
         }
 
         public async Task<UserResponseModel> SignInAsync(UserLoginCommand userRequestModel)
@@ -43,12 +47,11 @@ namespace TTS.Source.Persistance.RelationalDB.Identity.Services
                 throw new AuthenticationException("Invalid credentials");
             }
 
-            var token = await _jwtGeneratorService.GenerateToken(user);
+            var token = _authTokenProcessor.GenerateJwtToken(user);
             UserDto userDto = new UserDto()
             {
                 Id = user.Id,
                 CreatedDate = user.CreatedDate,
-
                 CardId = user.CardId,
                 Discriminator = user.Discriminator,
                 ImagePath = user.ImagePath,
@@ -69,7 +72,7 @@ namespace TTS.Source.Persistance.RelationalDB.Identity.Services
 
             };
 
-            return new UserResponseModel(userDto, token);
+            return new UserResponseModel(userDto, token.jwtToken);
         }
 
         public async Task<UserResponseModel> SignUpAsync(User user, string password)
@@ -86,7 +89,7 @@ namespace TTS.Source.Persistance.RelationalDB.Identity.Services
                 throw new BadRequestException(string.Join(", ", errors));
             }
 
-            var token = await _jwtGeneratorService.GenerateToken(user);
+            var token = _authTokenProcessor.GenerateJwtToken(user);
             UserDto userDto = new UserDto()
             {
                 Id = user.Id,
@@ -110,8 +113,140 @@ namespace TTS.Source.Persistance.RelationalDB.Identity.Services
                 AccessFailedCount = user.AccessFailedCount,
 
             };
-            return new UserResponseModel(userDto, token);
+            return new UserResponseModel(userDto, token.jwtToken);
         }
+
+        public async Task<UserResponseModel> SignInWithGoogleAsync(UserLoginCommand userRequestModel)
+        {
+            // var user = await _userManager.FindByEmailAsync(userRequestModel.Email!);
+            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.CardId == userRequestModel.CardId || u.Email == userRequestModel.Email || u.PhoneNumber == userRequestModel.PhoneNumber && u.Discriminator == userRequestModel.UserRole);
+
+
+            if (user == null)
+            {
+                throw new NotFoundException("User not found");
+            }
+
+            var passwordValid = await _userManager.CheckPasswordAsync(
+                user,
+                userRequestModel.Password);
+
+            if (!passwordValid)
+            {
+                throw new AuthenticationException("Invalid credentials");
+            }
+
+            var token = _authTokenProcessor.GenerateJwtToken(user);
+            UserDto userDto = new UserDto()
+            {
+                Id = user.Id,
+                CreatedDate = user.CreatedDate,
+                CardId = user.CardId,
+                Discriminator = user.Discriminator,
+                ImagePath = user.ImagePath,
+                BirthDate = user.BirthDate,
+                UserName = user.UserName,
+                NormalizedUserName = user.NormalizedUserName,
+                Email = user.Email,
+                NormalizedEmail = user.NormalizedEmail,
+                EmailConfirmed = user.EmailConfirmed,
+                SecurityStamp = user.SecurityStamp,
+                ConcurrencyStamp = user.ConcurrencyStamp,
+                PhoneNumber = user.PhoneNumber,
+                PhoneNumberConfirmed = user.PhoneNumberConfirmed,
+                TwoFactorEnabled = user.TwoFactorEnabled,
+                LockoutEnd = user.LockoutEnd,
+                LockoutEnabled = user.LockoutEnabled,
+                AccessFailedCount = user.AccessFailedCount,
+
+            };
+
+            return new UserResponseModel(userDto, token.jwtToken);
+        }
+
+        public async Task<UserResponseModel> SignInWithGooglePayloadAsync(string email, string? name, string? picture, string userRole)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                user = new User(email, name, true, userRole);
+
+                var result = await _userManager.CreateAsync(user);
+                if (!result.Succeeded)
+                {
+                    throw new BadRequestException(string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
+            }
+
+            var token = _authTokenProcessor.GenerateJwtToken(user);
+
+            var userDto = new UserDto
+            {
+                Id = user.Id,
+                Email = user.Email,
+                Discriminator = user.Discriminator,
+                UserName = user.UserName,
+                ImagePath = user.ImagePath,
+                CreatedDate = user.CreatedDate
+                // Fill more fields if needed
+            };
+
+            return new UserResponseModel(userDto, token.jwtToken);
+        }
+
+
+        public async Task LoginWithGoogleAsync(ClaimsPrincipal? claimsPrincipal, string userRole)
+        {
+            if (claimsPrincipal == null)
+                throw new Exception("Google ClaimsPrincipal is null");
+
+            var email = claimsPrincipal.FindFirstValue(ClaimTypes.Email);
+            var googleId = claimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier);
+            var givenName = claimsPrincipal.FindFirstValue(ClaimTypes.GivenName) ?? "";
+            var surname = claimsPrincipal.FindFirstValue(ClaimTypes.Surname) ?? "";
+
+            if (email == null)
+                throw new Exception("Google Email is null");
+
+            var user = await _userManager.FindByEmailAsync(email);
+
+            if (user == null)
+            {
+                var newUser = new User
+                (
+                    email,
+                    givenName, true,
+
+    userRole
+
+                );
+
+                var result = await _userManager.CreateAsync(newUser);
+
+                // if (!result.Succeeded)
+                // {
+                //     throw new EventWaitHandle("Google"+
+                //         $"Unable to create user: {string.Join(", ", result.Errors.Select(x => x.Description))}");
+                // }
+
+                user = newUser;
+            }
+
+            var loginInfo = new UserLoginInfo("Google", googleId ?? Guid.NewGuid().ToString(), "Google");
+            await _userManager.AddLoginAsync(user, loginInfo);
+
+            var (jwtToken, expirationDateInUtc) = _authTokenProcessor.GenerateJwtToken(user);
+            var refreshToken = _authTokenProcessor.GenerateRefreshToken();
+
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiresAtUtc = DateTime.UtcNow.AddDays(7);
+            await _userManager.UpdateAsync(user);
+
+            _authTokenProcessor.WriteAuthTokenAsHttpOnlyCookie("ACCESS_TOKEN", jwtToken, expirationDateInUtc);
+            _authTokenProcessor.WriteAuthTokenAsHttpOnlyCookie("REFRESH_TOKEN", refreshToken, user.RefreshTokenExpiresAtUtc);
+        }
+
 
         public async Task<User?> GetUserByEmailAddressAsync(string email)
         {
@@ -128,44 +263,6 @@ namespace TTS.Source.Persistance.RelationalDB.Identity.Services
             return await _userManager.Users.SingleOrDefaultAsync(u => u.CardId == cardId);
         }
 
-        // public async Task<ForgotPasswordResponseModel> ForgotPasswordAsync(ForgotPasswordModel forgotPasswordModel)
-        // {
-        //     var user = await _userManager.FindByEmailAsync(forgotPasswordModel.Email);
-        //     if (user == null)
-        //         throw new NotFoundException("User not found");
 
-        //     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-        //     return new ForgotPasswordResponseModel(token, user.Email!);
-        // }
-
-        // public async Task<ResetPasswordResponseModel> ResetPasswordAsync(ResetPasswordRequestModel resetPasswordModel)
-        // {
-
-        //     var user = await _userManager.FindByEmailAsync(resetPasswordModel.Email);
-        //     if (user == null)
-        //         throw new BadRequestException("user not exists");
-
-        //     var resetPassResult = await _userManager.ResetPasswordAsync(user, resetPasswordModel.Token, resetPasswordModel.Password);
-        //     if (!resetPassResult.Succeeded)
-        //     {
-        //         return new ResetPasswordResponseModel
-        //         {
-        //             Email = user.Email!,
-        //             Token = resetPasswordModel.Token,
-        //             Success = resetPassResult.Succeeded,
-        //             Message = "Password reset failed"
-        //         };
-        //     }
-        //     var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-        //     return new ResetPasswordResponseModel
-        //     {
-        //         Email = user.Email!,
-        //         Token = token,
-        //         Success = resetPassResult.Succeeded,
-        //         Message = "Password reset successful"
-        //     };
-        // }
     }
 }

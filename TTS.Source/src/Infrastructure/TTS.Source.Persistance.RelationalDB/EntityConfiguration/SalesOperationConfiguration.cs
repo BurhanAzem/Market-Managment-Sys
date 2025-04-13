@@ -8,9 +8,9 @@ using static TTS.Source.Domain.Shared.Constants;
 
 namespace TTS.Source.Persistance.RelationalDB.EntityConfiguration
 {
-    public class SalesOperationConfiguration : IEntityTypeConfiguration<SalesOperation>
+    public class SalesOperationConfiguration : IEntityTypeConfiguration<SaleOperations>
     {
-        public void Configure(EntityTypeBuilder<SalesOperation> builder)
+        public void Configure(EntityTypeBuilder<SaleOperations> builder)
         {
             builder.ToTable("SalesOperation");
             builder.HasKey(p => p.Id);

@@ -1,5 +1,7 @@
 
 using EmailService;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System.Text.Json.Serialization;
@@ -69,6 +71,19 @@ namespace TTS.Source.API
             builder.Services.AddApplicationServices();
             builder.Services.AddRelationalDbServices(builder.Configuration, builder.Environment);
 
+            builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
+})
+.AddCookie()
+.AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"];
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"];
+    options.CallbackPath = "/api/auth/google-callback";
+});
+
 
             builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
@@ -87,7 +102,7 @@ namespace TTS.Source.API
             var emailConfig = builder.Configuration
             .GetSection("EmailConfiguration")
             .Get<EmailConfiguration>();
-            if(emailConfig == null)
+            if (emailConfig == null)
             {
                 throw new ArgumentNullException("EmailConfiguration");
             }

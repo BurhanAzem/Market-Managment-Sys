@@ -8,16 +8,14 @@ using static TTS.Source.Domain.Shared.Constants;
 
 namespace TTS.Source.Persistance.RelationalDB.EntityConfiguration
 {
-    public class DebitConfiguration : IEntityTypeConfiguration<Debit>
+    public class RapidChangeProductsConfiguration : IEntityTypeConfiguration<RapidChangeProduct>
     {
-        public void Configure(EntityTypeBuilder<Debit> builder)
+        public void Configure(EntityTypeBuilder<RapidChangeProduct> builder)
         {
             builder.HasKey(p => p.Id);
-            builder.Property(p => p.LastPymentDate).HasColumnType("date");
-            builder.HasOne(d => d.Customer)
-                    .WithOne(u => u.Debit)
-                    .HasForeignKey<Debit>(d => d.CustomerId)
-                    .OnDelete(DeleteBehavior.Restrict);
+            builder.Property(p => p.CreatedDate).HasColumnType("date");
+            builder.HasOne(p => p.Product).WithMany().HasForeignKey(p => p.ProductId).OnDelete(DeleteBehavior.Restrict).IsRequired(false);
+
         }
     }
 }

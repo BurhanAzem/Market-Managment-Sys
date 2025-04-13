@@ -22,6 +22,6 @@ public class Employee : User
     public Manager? Manager { get; set; }
 
     public Guid? ManagerId { get; set; }
-    public ICollection<SalesOperation> SalesOperation { get; set; }
+    public ICollection<SaleOperations> SalesOperation { get; set; }
 
 }

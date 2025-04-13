@@ -29,6 +29,7 @@ import { RootState } from "../../../redux/store/store";
 import { size } from "lodash";
 import { useNavigate } from "react-router-dom";
 import { green } from "@mui/material/colors";
+import SignInWithGoogle from "../../../components/SignInWithGoogle";
 
 const SignIn = () => {
   const dispatch = useAppDispatch();
@@ -94,7 +95,7 @@ const SignIn = () => {
             borderColor={"lightgray"}
             borderRadius={4}
             boxShadow={5}
-            // justifyContent="space-between"
+          // justifyContent="space-between"
           >
 
             <Box
@@ -165,6 +166,8 @@ const SignIn = () => {
                   <Box py={2}>
                     <Button variant="contained" fullWidth onClick={() => setSelectedLoginIdentifierMethod("phone")}>Phone Number</Button>
                   </Box>
+                  <Divider sx={{ pb: 1, fontSize: "8pt" }}>Or continue with</Divider>
+                  <SignInWithGoogle userRole={userRole} />
                 </Box>
               </Box>
             ) : (
@@ -253,6 +256,7 @@ const SignIn = () => {
                       Login
                     </Button>
                   </Box>
+
 
                   <Divider sx={{ pb: 1, fontSize: "8pt" }}>Powered by Burhan Azem</Divider>
                 </Box>

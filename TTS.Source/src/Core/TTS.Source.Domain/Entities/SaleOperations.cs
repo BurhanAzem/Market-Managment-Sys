@@ -5,9 +5,9 @@ using TTS.Source.Domain.Shared;
 
 namespace TTS.Source.Domain.Entities
 {
-    public class SalesOperation : BaseAggregateRoot<Guid>
+    public class SaleOperations : BaseAggregateRoot<Guid>
     {
-        private SalesOperation() { }
+        private SaleOperations() { }
 
         // public SalesOperation(string name,
         //     string description,

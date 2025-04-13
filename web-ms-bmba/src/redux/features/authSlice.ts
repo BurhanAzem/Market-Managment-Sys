@@ -25,7 +25,7 @@ const initialState: AuthState = {
 };
 
 export const loginAuth = createAsyncThunk<
-  IAuth, 
+  IAuth,
   { cardId: string; email: string; phoneNumber: string; userRole: string; password: string },
   { rejectValue: string }
 >(
@@ -46,9 +46,9 @@ export const loginAuth = createAsyncThunk<
         },
         { headers: { "Content-Type": "application/json" } }
       );
-      
 
-      console.log("API Response:", response.data); 
+
+      console.log("API Response:", response.data);
 
       if (!response.data.token) {
         throw new Error("Invalid response: Token is missing");
@@ -57,7 +57,7 @@ export const loginAuth = createAsyncThunk<
       localStorage.setItem("authToken", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.userDto));
 
-      return response.data; 
+      return response.data;
     } catch (err: any) {
       console.error("Login API Error:", err.response?.data);
       return rejectWithValue(err.response?.data?.message || "Login failed");
@@ -117,6 +117,36 @@ export const logoutAuth = createAsyncThunk<void, void, { rejectValue: string }>(
   }
 );
 
+
+
+export const loginGoogleAuth = createAsyncThunk<
+  IAuth,
+  { tokenId?: string, userRole: string },
+  { rejectValue: string }
+>(
+  "auth/loginGoogle",
+  async ({ tokenId, userRole }, { rejectWithValue }) => {
+    try {
+      const response = await axios.post<IAuth>("/auth/google-login", {
+        tokenId,
+        userRole
+      });
+      // The response should contain your own backend JWT + user info
+      const { token, userDto } = response.data;
+
+      // 2) Save to localStorage 
+      localStorage.setItem("authToken", token);
+      localStorage.setItem("user", JSON.stringify(userDto));
+
+      // 3) Return Redux payload
+      return response.data;
+    } catch (err: any) {
+      console.error("Google Login API Error:", err.response?.data);
+      return rejectWithValue(err.response?.data?.message || "Google Login failed");
+    }
+  }
+);
+
 export const authSlice = createSlice({
   name: 'auth',
   initialState,
@@ -140,7 +170,7 @@ export const authSlice = createSlice({
         state.error = action.payload ?? "Login failed";
         console.log("Registration Failed - Redux State:", state);
       })
-      
+
       .addCase(registerAuth.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -172,6 +202,23 @@ export const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload ?? 'Logout failed';
       });
+
+    builder
+      .addCase(loginGoogleAuth.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginGoogleAuth.fulfilled, (state, action) => {
+        state.loading = false;
+        state.authToken = action.payload.token;
+        state.user = action.payload.userDto;
+        state.error = null;
+      })
+      .addCase(loginGoogleAuth.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "Google login failed";
+      });
+
   },
 });
 

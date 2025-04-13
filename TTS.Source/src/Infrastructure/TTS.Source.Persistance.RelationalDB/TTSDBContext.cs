@@ -16,7 +16,7 @@ namespace TTS.Source.Persistance.RelationalDB
         public DbSet<Member> Members { get; set; }
 
         public DbSet<User> Users { get; set; }
-        public DbSet<SalesOperation> SalesOperations { get; set; }
+        public DbSet<SaleOperations> SalesOperations { get; set; }
         public DbSet<ProductOperation> ProductOperations { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Debit> Debits { get; set; }

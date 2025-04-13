@@ -8,7 +8,7 @@ namespace TTS.Source.Domain.Entities
     public class ProductOperation : BaseAggregateRoot<Guid>
     {
         private ProductOperation() { }
-        public SalesOperation SalesOperation { get; set; } = null!;
+        public SaleOperations SalesOperation { get; set; } = null!;
         public Guid SalesOperationId { get; set; }
         public Product Product { get; set; }
         public Guid ProductId { get; set; }

@@ -26,6 +26,6 @@ namespace TTS.Source.Domain.Entities
         public double? Latitude { get; set; }
         public double? Longitude { get; set; }
 
-        public virtual ICollection<SalesOperation> CustomerSalesOperations { get; set; } = new List<SalesOperation>();
+        public virtual ICollection<SaleOperations> CustomerSalesOperations { get; set; } = new List<SaleOperations>();
     }
 }
