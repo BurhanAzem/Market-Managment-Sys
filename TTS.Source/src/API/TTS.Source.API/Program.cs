@@ -31,6 +31,11 @@ namespace TTS.Source.API
                 options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
             });
+            
+            if (builder.Environment.IsDevelopment())
+            {
+                builder.Configuration.AddUserSecrets<Program>();
+            }
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(option =>
@@ -108,6 +113,10 @@ namespace TTS.Source.API
             }
             builder.Services.AddSingleton(emailConfig);
             builder.Services.AddScoped<IEmailSender, EmailSender>();
+
+
+
+
 
             var app = builder.Build();
             app.UseCors(myAllowSpecificOrigins);
